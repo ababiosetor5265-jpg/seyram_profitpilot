@@ -195,6 +195,72 @@ tr:hover td{background:var(--off)}
 .dropdown-item i{font-size:16px;width:18px;text-align:center}
 .dropdown-item.danger{color:var(--red)}
 .dropdown-item.danger:hover{background:var(--red-soft)}
+
+/* MOBILE RESPONSIVENESS */
+.menu-toggle{display:none}
+@media(max-width:992px){
+  .sidebar{left:-220px;transition:.3s;box-shadow:4px 0 15px rgba(0,0,0,0.1)}
+  .sidebar.open{left:0}
+  .main{margin-left:0}
+  .menu-toggle{display:flex}
+  .grid-7-3, .grid-2, .grid-3{grid-template-columns:1fr}
+  .form-row, .form-row-3{grid-template-columns:1fr}
+  .modal{width:92%;margin:20px;max-height:90vh}
+  .topbar-period span{display:none}
+  .topbar{padding:0 16px}
+  .content{padding:16px}
+  .metrics-grid{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}
+  
+  /* Section Header stacking */
+  .section > div:first-child[style*="flex-direction: row"],
+  .section > div:first-child[style*="display: flex"] {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 12px !important;
+  }
+  .section > div:first-child > div[style*="display: flex"] {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .section button.btn-sm {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media(max-width:576px){
+  .metrics-grid{grid-template-columns:1fr 1fr;gap:10px}
+  .metric-value{font-size:18px}
+  .metric-card{padding:12px}
+  .topbar-period{padding:7px 10px}
+  .topbar-period i:last-child{display:none}
+  .chat-msg{max-width:90%}
+  .logo-mark{font-size:16px}
+  .page-title{font-size:15px}
+  
+  /* Table adjustments */
+  td, th {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .tbl-wrap {
+    margin: 0 -16px;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
+  
+  /* Tabs stacking */
+  .tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab {
+    padding: 10px 12px;
+    flex-shrink: 0;
+  }
+}
 </style>
 </head>
 <body>
@@ -236,7 +302,10 @@ tr:hover td{background:var(--off)}
 <!-- MAIN -->
 <main class="main">
   <div class="topbar">
-    <div class="page-title" id="page-title">Dashboard</div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="topbar-btn menu-toggle" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+      <div class="page-title" id="page-title">Dashboard</div>
+    </div>
     <div class="topbar-right">
       <div class="topbar-period"><i class="ti ti-calendar" style="font-size:14px"></i>June 2026<i class="ti ti-chevron-down" style="font-size:12px"></i></div>
       <button class="topbar-btn" title="Search"><i class="ti ti-search"></i></button>
@@ -883,6 +952,15 @@ function nav(el,section){
   if(section==='statements')refreshStatements();
   if(section==='forecast')refreshForecast();
   if(section==='tax')refreshTax();
+  
+  // Close sidebar on mobile after selection
+  if(window.innerWidth <= 992){
+    document.querySelector('.sidebar').classList.remove('open');
+  }
+}
+
+function toggleSidebar(){
+  document.querySelector('.sidebar').classList.toggle('open');
 }
 
 function openModal(id){document.getElementById(id).classList.add('open')}
