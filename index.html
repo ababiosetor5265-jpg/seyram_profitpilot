@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ProfitPilot AI</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+--teal:#0ea5e9;--teal-dark:#0284c7;--teal-soft:#e0f2fe;--teal-mid:#38bdf8;
+--navy:#0f172a;--navy-mid:#1e293b;--navy-soft:#334155;
+--white:#ffffff;--off:#f8fafc;--border:#e2e8f0;--muted:#94a3b8;
+--text:#1e293b;--text-soft:#64748b;
+--green:#10b981;--green-soft:#d1fae5;
+--red:#ef4444;--red-soft:#fee2e2;
+--amber:#f59e0b;--amber-soft:#fef3c7;
+--purple:#8b5cf6;--purple-soft:#ede9fe;
+--radius:12px;--radius-sm:8px;--radius-lg:16px;--radius-xl:24px;
+--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+--shadow-md:0 4px 16px rgba(0,0,0,.08),0 1px 4px rgba(0,0,0,.04);
+}
+body{font-family:'DM Sans',sans-serif;background:var(--off);color:var(--text);min-height:100vh;display:flex;font-size:14px}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-height:100vh;background:var(--navy);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:100}
+.logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.logo-mark{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--white);letter-spacing:-.3px}
+.logo-mark span{color:var(--teal-mid)}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:.8px;text-transform:uppercase;margin-top:2px}
+.nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{padding:16px 16px 4px;font-size:10px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;font-weight:600}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 16px;color:rgba(255,255,255,.55);cursor:pointer;transition:.15s;border-radius:0;margin:1px 8px;border-radius:var(--radius-sm);font-size:13.5px;font-weight:400}
+.nav-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.85)}
+.nav-item.active{background:rgba(14,165,233,.15);color:var(--teal-mid);font-weight:500}
+.nav-item i{font-size:16px;width:18px;text-align:center}
+.nav-badge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:20px}
+.sidebar-bottom{padding:16px;border-top:1px solid rgba(255,255,255,.07)}
+.biz-card{background:rgba(255,255,255,.05);border-radius:var(--radius-sm);padding:12px;display:flex;align-items:center;gap:10px}
+.biz-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--teal-dark));display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#fff;flex-shrink:0}
+.biz-name{font-size:12px;font-weight:500;color:rgba(255,255,255,.85)}
+.biz-plan{font-size:10px;color:var(--teal-mid)}
+
+/* MAIN */
+.main{margin-left:220px;flex:1;min-height:100vh;display:flex;flex-direction:column}
+.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+.page-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;color:var(--navy)}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-soft);transition:.15s}
+.topbar-btn:hover{background:var(--off);color:var(--text)}
+.topbar-period{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12.5px;color:var(--text-soft);cursor:pointer;background:var(--white)}
+.content{padding:28px;flex:1}
+
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow)}
+.card-sm{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
+
+/* METRIC CARDS */
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px}
+.metric-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+.metric-label{font-size:11px;color:var(--text-soft);text-transform:uppercase;letter-spacing:.6px;font-weight:500;margin-bottom:8px}
+.metric-value{font-family:'Syne',sans-serif;font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.metric-change{font-size:11.5px;display:flex;align-items:center;gap:4px}
+.metric-change.up{color:var(--green)}
+.metric-change.down{color:var(--red)}
+.metric-icon{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:17px;margin-bottom:12px}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.grid-7-3{display:grid;grid-template-columns:7fr 3fr;gap:16px}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:500}
+.badge-green{background:var(--green-soft);color:#065f46}
+.badge-red{background:var(--red-soft);color:#991b1b}
+.badge-amber{background:var(--amber-soft);color:#92400e}
+.badge-teal{background:var(--teal-soft);color:#0369a1}
+.badge-purple{background:var(--purple-soft);color:#5b21b6}
+
+/* TABLES */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:600;color:var(--text-soft);text-transform:uppercase;letter-spacing:.5px;padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);background:var(--off)}
+td{padding:11px 14px;border-bottom:1px solid var(--border);font-size:13.5px;color:var(--text)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--off)}
+.tbl-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:auto;max-height:600px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;cursor:pointer;transition:.15s;border:none;font-family:'DM Sans',sans-serif}
+.btn-primary{background:var(--teal);color:#fff}
+.btn-primary:hover{background:var(--teal-dark)}
+.btn-outline{background:var(--white);color:var(--text);border:1px solid var(--border)}
+.btn-outline:hover{background:var(--off)}
+.btn-sm{padding:6px 14px;font-size:12px}
+.btn-danger{background:var(--red-soft);color:#991b1b}
+.btn-danger:hover{background:#fca5a5}
+
+/* FORMS */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:12px;font-weight:500;color:var(--text-soft);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.form-input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:13.5px;color:var(--text);font-family:'DM Sans',sans-serif;background:var(--white);outline:none;transition:.15s}
+.form-input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(14,165,233,.12)}
+.form-select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,.45);z-index:200;display:none;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--radius-lg);width:520px;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-md)}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700}
+.modal-body{padding:24px}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.modal-close{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--white);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-soft)}
+
+/* ALERTS */
+.alert{padding:12px 16px;border-radius:var(--radius-sm);font-size:13px;display:flex;align-items:flex-start;gap:10px;margin-bottom:12px}
+.alert-warning{background:var(--amber-soft);color:#92400e;border:1px solid #fcd34d}
+.alert-info{background:var(--teal-soft);color:#0369a1;border:1px solid #7dd3fc}
+.alert-success{background:var(--green-soft);color:#065f46;border:1px solid #6ee7b7}
+
+/* SECTIONS */
+.section{display:none}
+.section.active{display:block}
+
+/* PROGRESS BAR */
+.progress{height:6px;background:var(--off);border-radius:3px;overflow:hidden}
+.progress-bar{height:100%;border-radius:3px;background:var(--teal);transition:.3s}
+
+/* CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:420px;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;background:var(--off)}
+.chat-msg{max-width:78%;padding:10px 14px;border-radius:12px;font-size:13.5px;line-height:1.5}
+.chat-msg.ai{background:var(--white);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.chat-msg.user{background:var(--teal);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.chat-input-row{display:flex;gap:8px;padding:12px;border-top:1px solid var(--border);background:var(--white)}
+.chat-input{flex:1;padding:9px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:13.5px;outline:none}
+.chat-input:focus{border-color:var(--teal)}
+.chat-send{padding:9px 16px;background:var(--teal);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:6px}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{width:64px;height:64px;border-radius:50%;background:var(--teal-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:26px;color:var(--teal-dark)}
+.empty-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty-desc{font-size:13px;color:var(--text-soft);max-width:280px;margin:0 auto 20px}
+
+/* STAT ROW */
+.stat-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)}
+.stat-row:last-child{border-bottom:none}
+
+/* TABS */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:20px}
+.tab{padding:10px 16px;font-size:13px;color:var(--text-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;font-weight:500;transition:.15s}
+.tab.active{color:var(--teal-dark);border-bottom-color:var(--teal)}
+.tab:hover:not(.active){color:var(--text)}
+
+/* PRODUCT IMAGE PLACEHOLDER */
+.prod-thumb{width:38px;height:38px;border-radius:var(--radius-sm);background:var(--off);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:16px;flex-shrink:0}
+
+/* FORECAST */
+.forecast-card{background:var(--navy);border-radius:var(--radius-lg);padding:20px;color:#fff}
+.forecast-label{font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.4);margin-bottom:6px}
+.forecast-value{font-family:'Syne',sans-serif;font-size:24px;font-weight:800;color:#fff}
+.forecast-note{font-size:12px;color:rgba(255,255,255,.5);margin-top:4px}
+
+/* PILL */
+.pill{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;border:1px solid var(--border);color:var(--text-soft);cursor:pointer}
+.pill.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+
+/* LOAN */
+.loan-card{border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+.loan-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.loan-name{font-weight:500;font-size:14px}
+.loan-meta{font-size:12px;color:var(--text-soft)}
+
+/* DRAWING */
+.drawing-list{display:flex;flex-direction:column;gap:10px}
+.drawing-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm)}
+
+/* REFUND */
+.refund-tag{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500}
+
+/* Dropdown Menu */
+.dropdown{position:relative;display:inline-block}
+.dropdown-btn{background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:4px;transition:.15s;display:flex;align-items:center;justify-content:center}
+.dropdown-btn:hover{background:var(--border);color:var(--text)}
+.dropdown-content{display:none;position:absolute;right:0;top:100%;background:var(--white);min-width:140px;box-shadow:var(--shadow-md);border:1px solid var(--border);border-radius:var(--radius-sm);z-index:100;max-height:150px;overflow-y:auto}
+.dropdown-content.show{display:block}
+.dropdown-item{padding:8px 12px;font-size:13px;color:var(--text);cursor:pointer;display:flex;align-items:center;gap:8px;transition:.15s;text-align:left;width:100%}
+.dropdown-item:hover{background:var(--off)}
+.dropdown-item i{font-size:16px;width:18px;text-align:center}
+.dropdown-item.danger{color:var(--red)}
+.dropdown-item.danger:hover{background:var(--red-soft)}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Profit<span>Pilot</span></div>
+    <div class="logo-sub">AI Finance Manager</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-section">Overview</div>
+    <div class="nav-item active" onclick="nav(this,'dashboard')"><i class="ti ti-layout-dashboard"></i>Dashboard</div>
+    <div class="nav-section">Operations</div>
+    <div class="nav-item" onclick="nav(this,'inventory')"><i class="ti ti-package"></i>Inventory<span class="nav-badge" id="lowstock-badge" style="display:none">!</span></div>
+    <div class="nav-item" onclick="nav(this,'sales')"><i class="ti ti-shopping-cart"></i>Sales</div>
+    <div class="nav-item" onclick="nav(this,'expenses')"><i class="ti ti-receipt"></i>Expenses</div>
+    <div class="nav-item" onclick="nav(this,'refunds')"><i class="ti ti-arrow-back-up"></i>Refunds</div>
+    <div class="nav-section">Finance</div>
+    <div class="nav-item" onclick="nav(this,'capital')"><i class="ti ti-coin"></i>Capital & Loans</div>
+    <div class="nav-item" onclick="nav(this,'drawings')"><i class="ti ti-wallet"></i>Owner Drawings</div>
+    <div class="nav-item" onclick="nav(this,'statements')"><i class="ti ti-file-text"></i>Statements</div>
+    <div class="nav-section">Intelligence</div>
+    <div class="nav-item" onclick="nav(this,'ai')"><i class="ti ti-robot"></i>AI Assistant</div>
+    <div class="nav-item" onclick="nav(this,'forecast')"><i class="ti ti-chart-line"></i>Forecasting</div>
+    <div class="nav-item" onclick="nav(this,'tax')"><i class="ti ti-calculator"></i>Tax Prep</div>
+  </nav>
+  <div class="sidebar-bottom">
+    <div class="biz-card">
+      <div class="biz-avatar">MB</div>
+      <div>
+        <div class="biz-name">My Business</div>
+        <div class="biz-plan">Pro Plan · Active</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="topbar">
+    <div class="page-title" id="page-title">Dashboard</div>
+    <div class="topbar-right">
+      <div class="topbar-period"><i class="ti ti-calendar" style="font-size:14px"></i>June 2026<i class="ti ti-chevron-down" style="font-size:12px"></i></div>
+      <button class="topbar-btn" title="Search"><i class="ti ti-search"></i></button>
+      <button class="topbar-btn" title="Notifications"><i class="ti ti-bell"></i></button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- DASHBOARD -->
+    <div class="section active" id="sec-dashboard">
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon" style="background:var(--teal-soft);color:var(--teal-dark)"><i class="ti ti-trending-up"></i></div>
+          <div class="metric-label">Total Revenue</div>
+          <div class="metric-value" id="m-revenue">₵0</div>
+          <div class="metric-change" id="m-rev-change"><i class="ti ti-minus" style="font-size:11px"></i>No data yet</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:var(--red-soft);color:#991b1b"><i class="ti ti-trending-down"></i></div>
+          <div class="metric-label">Total Expenses</div>
+          <div class="metric-value" id="m-expenses">₵0</div>
+          <div class="metric-change" id="m-exp-change"><i class="ti ti-minus" style="font-size:11px"></i>No data yet</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:var(--green-soft);color:#065f46"><i class="ti ti-moneybag"></i></div>
+          <div class="metric-label">Net Profit</div>
+          <div class="metric-value" id="m-profit">₵0</div>
+          <div class="metric-change" id="m-profit-margin"><i class="ti ti-minus" style="font-size:11px"></i>0% margin</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:var(--purple-soft);color:#5b21b6"><i class="ti ti-box"></i></div>
+          <div class="metric-label">Inventory Value</div>
+          <div class="metric-value" id="m-inv">₵0</div>
+          <div class="metric-change" id="m-inv-items"><i class="ti ti-minus" style="font-size:11px"></i>0 products</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:var(--amber-soft);color:#92400e"><i class="ti ti-cash"></i></div>
+          <div class="metric-label">Cash Available</div>
+          <div class="metric-value" id="m-cash">₵0</div>
+          <div class="metric-change"><i class="ti ti-info-circle" style="font-size:11px"></i>Updated now</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-icon" style="background:var(--teal-soft);color:var(--teal-dark)"><i class="ti ti-chart-bar"></i></div>
+          <div class="metric-label">Monthly Growth</div>
+          <div class="metric-value" id="m-growth">—</div>
+          <div class="metric-change"><i class="ti ti-minus" style="font-size:11px"></i>No prior month</div>
+        </div>
+      </div>
+
+      <div class="grid-7-3" style="margin-bottom:16px">
+        <div class="card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700">Revenue vs Expenses</div>
+            <span class="badge badge-teal">Last 6 months</span>
+          </div>
+          <div style="position:relative;height:200px"><canvas id="dashChart" role="img" aria-label="Revenue vs expenses chart, no data yet">No transaction data recorded yet.</canvas></div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Quick Actions</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-primary" style="justify-content:center" onclick="nav(document.querySelector('[onclick*=sales]'),'sales');openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button>
+            <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelector('[onclick*=inventory]'),'inventory');openRestockModal()"><i class="ti ti-package"></i>Restock Item</button>
+            <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelector('[onclick*=expenses]'),'expenses');openExpenseModal()"><i class="ti ti-receipt"></i>Add Expense</button>
+            <button class="btn btn-outline" style="justify-content:center" onclick="nav(document.querySelector('[onclick*=capital]'),'capital');openCapitalModal()"><i class="ti ti-coin"></i>Record Capital</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px">Top Selling Products</div>
+          <div id="top-products-list">
+            <div class="empty-state" style="padding:30px 20px">
+              <div class="empty-icon"><i class="ti ti-chart-bar"></i></div>
+              <div class="empty-title">No sales yet</div>
+              <div class="empty-desc">Record your first sale to see top performers here.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px">Alerts</div>
+          <div id="alerts-list">
+            <div class="alert alert-info"><i class="ti ti-info-circle" style="font-size:16px;flex-shrink:0"></i><div>Welcome to ProfitPilot! Add products to your inventory to get started.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div class="section" id="sec-inventory">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div style="font-size:13px;color:var(--text-soft)" id="inv-summary">0 products · ₵0 total value</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="openRestockModal()"><i class="ti ti-plus"></i>Restock</button>
+          <button class="btn btn-primary btn-sm" onclick="openProductModal()"><i class="ti ti-plus"></i>Add Product</button>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Product</th><th>Category</th><th>Qty</th><th>Cost Price</th><th>Sell Price</th><th>Margin</th><th>Status</th><th></th></tr></thead>
+          <tbody id="inv-table-body">
+            <tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="ti ti-package"></i></div><div class="empty-title">No products yet</div><div class="empty-desc">Add your first product to start tracking inventory.</div><button class="btn btn-primary" onclick="openProductModal()"><i class="ti ti-plus"></i>Add Product</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SALES -->
+    <div class="section" id="sec-sales">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="display:flex;gap:8px">
+          <div class="pill active" onclick="filterSales(this,'all')">All</div>
+          <div class="pill" onclick="filterSales(this,'today')">Today</div>
+          <div class="pill" onclick="filterSales(this,'week')">This week</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button>
+      </div>
+      <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+        <div class="metric-card"><div class="metric-label">Total Revenue</div><div class="metric-value" id="s-revenue">₵0</div></div>
+        <div class="metric-card"><div class="metric-label">Gross Profit</div><div class="metric-value" id="s-profit">₵0</div></div>
+        <div class="metric-card"><div class="metric-label">Units Sold</div><div class="metric-value" id="s-units">0</div></div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Sale Price</th><th>Discount</th><th>Revenue</th><th>Profit</th><th>Margin</th><th>Payment</th></tr></thead>
+          <tbody id="sales-table-body">
+            <tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="ti ti-shopping-cart"></i></div><div class="empty-title">No sales recorded</div><div class="empty-desc">Record your first sale to track revenue and profit.</div><button class="btn btn-primary" onclick="openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- EXPENSES -->
+    <div class="section" id="sec-expenses">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-size:13px;color:var(--text-soft)" id="exp-summary">₵0 total this month</div>
+        <button class="btn btn-primary btn-sm" onclick="openExpenseModal()"><i class="ti ti-plus"></i>Add Expense</button>
+      </div>
+      <div class="grid-2" style="margin-bottom:20px">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px">By Category</div>
+          <div style="position:relative;height:200px"><canvas id="expChart" role="img" aria-label="Expense breakdown by category, no data yet">No expenses recorded.</canvas></div>
+          <div id="exp-legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px"></div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px">Recent Expenses</div>
+          <div id="recent-expenses">
+            <div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-receipt"></i></div><div class="empty-title">No expenses yet</div><div class="empty-desc">Track your spending to understand your costs.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+          <tbody id="exp-table-body">
+            <tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text-soft)">No expenses recorded yet.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- REFUNDS -->
+    <div class="section" id="sec-refunds">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-size:13px;color:var(--text-soft)" id="refund-summary">₵0 total refunded</div>
+        <button class="btn btn-primary btn-sm" onclick="openRefundModal()"><i class="ti ti-plus"></i>Record Refund</button>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Reason</th><th>Refund Amount</th><th>Restocked?</th></tr></thead>
+          <tbody id="refund-table-body">
+            <tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="ti ti-arrow-back-up"></i></div><div class="empty-title">No refunds recorded</div><div class="empty-desc">Customer returns and refunds will appear here.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CAPITAL -->
+    <div class="section" id="sec-capital">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-size:13px;color:var(--text-soft)" id="capital-summary">₵0 total funding · ₵0 outstanding loans</div>
+        <button class="btn btn-primary btn-sm" onclick="openCapitalModal()"><i class="ti ti-plus"></i>Add Funding</button>
+      </div>
+      <div class="grid-2">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Funding Sources</div>
+          <div id="capital-list">
+            <div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-coin"></i></div><div class="empty-title">No funding recorded</div><div class="empty-desc">Record investments, loans, and grants here.</div><button class="btn btn-primary" onclick="openCapitalModal()"><i class="ti ti-plus"></i>Add Funding</button></div>
+          </div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Loan Overview</div>
+          <div id="loan-list">
+            <div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-credit-card"></i></div><div class="empty-title">No active loans</div><div class="empty-desc">Loans with repayment schedules will appear here.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DRAWINGS -->
+    <div class="section" id="sec-drawings">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div style="font-size:13px;color:var(--text-soft)" id="drawing-summary">₵0 withdrawn this month</div>
+        <button class="btn btn-primary btn-sm" onclick="openDrawingModal()"><i class="ti ti-plus"></i>Record Withdrawal</button>
+      </div>
+      <div class="alert alert-info"><i class="ti ti-info-circle" style="font-size:16px;flex-shrink:0"></i><div>Owner drawings are tracked separately to give you accurate business profitability — personal withdrawals do not count as business expenses.</div></div>
+      <div class="tbl-wrap" style="margin-top:16px">
+        <table>
+          <thead><tr><th>Date</th><th>Purpose</th><th>Amount</th><th>Remaining Business Cash</th></tr></thead>
+          <tbody id="drawing-table-body">
+            <tr><td colspan="4"><div class="empty-state"><div class="empty-icon"><i class="ti ti-wallet"></i></div><div class="empty-title">No withdrawals</div><div class="empty-desc">Record money you take from the business for personal use.</div></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- STATEMENTS -->
+    <div class="section" id="sec-statements">
+      <div class="tabs">
+        <div class="tab active" onclick="stmtTab(this,'pnl')">Profit & Loss</div>
+        <div class="tab" onclick="stmtTab(this,'balance')">Balance Sheet</div>
+        <div class="tab" onclick="stmtTab(this,'cashflow')">Cash Flow</div>
+      </div>
+      <div id="stmt-pnl">
+        <div class="grid-2">
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Profit & Loss Statement</div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Revenue</span><span id="pnl-rev" style="font-weight:500">₵0.00</span></div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Cost of Goods Sold</span><span id="pnl-cogs" style="font-weight:500;color:var(--red)">₵0.00</span></div>
+            <div class="stat-row"><span style="font-weight:500">Gross Profit</span><span id="pnl-gross" style="font-weight:600">₵0.00</span></div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Operating Expenses</span><span id="pnl-opex" style="font-weight:500;color:var(--red)">₵0.00</span></div>
+            <div class="stat-row" style="border-top:2px solid var(--border);margin-top:4px"><span style="font-family:'Syne',sans-serif;font-weight:700">Net Profit</span><span id="pnl-net" style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px">₵0.00</span></div>
+          </div>
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Expense Breakdown</div>
+            <div style="position:relative;height:200px"><canvas id="stmtChart" role="img" aria-label="Expense breakdown chart">No data.</canvas></div>
+          </div>
+        </div>
+      </div>
+      <div id="stmt-balance" style="display:none">
+        <div class="grid-2">
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Assets</div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Cash</span><span id="bs-cash" style="font-weight:500">₵0.00</span></div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Inventory Value</span><span id="bs-inv" style="font-weight:500">₵0.00</span></div>
+            <div class="stat-row"><span style="font-weight:600">Total Assets</span><span id="bs-assets" style="font-weight:600">₵0.00</span></div>
+          </div>
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Liabilities & Equity</div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Outstanding Loans</span><span id="bs-loans" style="font-weight:500;color:var(--red)">₵0.00</span></div>
+            <div class="stat-row"><span style="color:var(--text-soft)">Owner Drawings</span><span id="bs-draw" style="font-weight:500;color:var(--red)">₵0.00</span></div>
+            <div class="stat-row"><span style="font-weight:600">Owner Equity</span><span id="bs-equity" style="font-weight:600">₵0.00</span></div>
+          </div>
+        </div>
+      </div>
+      <div id="stmt-cashflow" style="display:none">
+        <div class="card" style="max-width:500px">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Cash Flow Statement</div>
+          <div class="stat-row"><span style="color:var(--text-soft)">Cash Inflows (Sales + Capital)</span><span id="cf-in" style="font-weight:500;color:var(--green)">₵0.00</span></div>
+          <div class="stat-row"><span style="color:var(--text-soft)">Cash Outflows (Expenses + Restock + Drawings)</span><span id="cf-out" style="font-weight:500;color:var(--red)">₵0.00</span></div>
+          <div class="stat-row"><span style="font-weight:600">Net Cash Flow</span><span id="cf-net" style="font-weight:600">₵0.00</span></div>
+          <div class="stat-row"><span style="font-family:'Syne',sans-serif;font-weight:700">Available Cash</span><span id="cf-avail" style="font-family:'Syne',sans-serif;font-weight:700;font-size:18px">₵0.00</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI ASSISTANT -->
+    <div class="section" id="sec-ai">
+      <div class="grid-7-3">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">AI Business Assistant</div>
+          <div class="chat-wrap">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-msg ai">👋 Hi! I'm your ProfitPilot AI assistant. Ask me anything about your business — profits, inventory, trends, or recommendations.</div>
+              <div class="chat-msg ai">Try questions like:<br>• "How much profit did I make this month?"<br>• "Which products should I restock?"<br>• "What's causing my expenses to rise?"</div>
+            </div>
+            <div class="chat-input-row">
+              <input class="chat-input" id="chat-input" placeholder="Ask about your business..." onkeydown="if(event.key==='Enter')sendChat()">
+              <button class="chat-send" onclick="sendChat()"><i class="ti ti-send"></i>Send</button>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:12px">Quick Prompts</div>
+            <div style="display:flex;flex-direction:column;gap:6px" id="quick-prompts">
+              <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start" onclick="quickPrompt(this)">How much profit this month?</button>
+              <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start" onclick="quickPrompt(this)">Which products to restock?</button>
+              <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start" onclick="quickPrompt(this)">What are my top expenses?</button>
+              <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start" onclick="quickPrompt(this)">Predict next month revenue</button>
+              <button class="btn btn-outline btn-sm" style="text-align:left;justify-content:flex-start" onclick="quickPrompt(this)">Am I growing or losing money?</button>
+            </div>
+          </div>
+          <div class="card">
+            <div style="font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:8px">AI Insights</div>
+            <div id="ai-insights" style="font-size:13px;color:var(--text-soft)">Add data to unlock AI-generated insights about your business.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORECAST -->
+    <div class="section" id="sec-forecast">
+      <div class="grid-3" style="margin-bottom:20px">
+        <div class="forecast-card">
+          <div class="forecast-label">Predicted Revenue</div>
+          <div class="forecast-value" id="fc-rev">₵0</div>
+          <div class="forecast-note">Next 30 days estimate</div>
+        </div>
+        <div class="forecast-card" style="background:var(--teal-dark)">
+          <div class="forecast-label">Predicted Expenses</div>
+          <div class="forecast-value" id="fc-exp">₵0</div>
+          <div class="forecast-note">Based on current trend</div>
+        </div>
+        <div class="forecast-card" style="background:#065f46">
+          <div class="forecast-label">Predicted Profit</div>
+          <div class="forecast-value" id="fc-profit">₵0</div>
+          <div class="forecast-note">If trend continues</div>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Revenue Forecast</div>
+        <div style="position:relative;height:220px"><canvas id="forecastChart" role="img" aria-label="Revenue forecast chart">Record sales to generate forecasts.</canvas></div>
+      </div>
+      <div class="card">
+        <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:12px">Stock Depletion Alerts</div>
+        <div id="stock-alerts">
+          <div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-chart-line"></i></div><div class="empty-title">No forecast available</div><div class="empty-desc">Record at least 5 sales to unlock smart inventory forecasting.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAX -->
+    <div class="section" id="sec-tax">
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Tax Summary</div>
+          <div class="stat-row"><span style="color:var(--text-soft)">Total Revenue (Taxable)</span><span id="tax-rev" style="font-weight:500">₵0.00</span></div>
+          <div class="stat-row"><span style="color:var(--text-soft)">Total Deductible Expenses</span><span id="tax-ded" style="font-weight:500;color:var(--green)">₵0.00</span></div>
+          <div class="stat-row"><span style="color:var(--text-soft)">VAT Collected (est. 15%)</span><span id="tax-vat" style="font-weight:500">₵0.00</span></div>
+          <div class="stat-row"><span style="font-weight:600">Taxable Profit</span><span id="tax-profit" style="font-weight:600">₵0.00</span></div>
+        </div>
+        <div class="card">
+          <div style="font-family:'Syne',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px">Export Reports</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <button class="btn btn-outline" style="justify-content:flex-start"><i class="ti ti-file-text" style="color:var(--red)"></i>Export P&L as PDF</button>
+            <button class="btn btn-outline" style="justify-content:flex-start"><i class="ti ti-table" style="color:var(--green)"></i>Export to Excel</button>
+            <button class="btn btn-outline" style="justify-content:flex-start"><i class="ti ti-file-spreadsheet" style="color:var(--teal)"></i>Export as CSV</button>
+            <button class="btn btn-outline" style="justify-content:flex-start"><i class="ti ti-calculator" style="color:var(--amber)"></i>Annual Tax Summary</button>
+          </div>
+        </div>
+      </div>
+      <div class="alert alert-warning"><i class="ti ti-alert-triangle" style="font-size:16px;flex-shrink:0"></i><div>These figures are estimates for reference only. Consult a qualified accountant for official tax filing in your jurisdiction.</div></div>
+    </div>
+
+  </div>
+</main>
+
+<!-- MODALS -->
+
+<!-- Add Product -->
+<div class="modal-overlay" id="modal-product">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Product</div><div class="modal-close" onclick="closeModal('modal-product')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product Name</label><input class="form-input" id="p-name" placeholder="e.g. Blue T-Shirt"></div>
+        <div class="form-group"><label class="form-label">Category</label><select class="form-input form-select" id="p-cat"><option>Clothing</option><option>Electronics</option><option>Food & Drinks</option><option>Beauty</option><option>Accessories</option><option>Other</option></select></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Cost Price (₵)</label><input class="form-input" id="p-cost" type="number" min="0" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Selling Price (₵)</label><input class="form-input" id="p-sell" type="number" min="0" placeholder="0.00"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Initial Quantity</label><input class="form-input" id="p-qty" type="number" min="0" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Low Stock Alert (qty)</label><input class="form-input" id="p-low" type="number" min="0" placeholder="5"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Supplier Name</label><input class="form-input" id="p-supplier" placeholder="Optional"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-product')">Cancel</button><button class="btn btn-primary" onclick="addProduct()"><i class="ti ti-check"></i>Add Product</button></div>
+  </div>
+</div>
+
+<!-- Restock -->
+<div class="modal-overlay" id="modal-restock">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Restock Product</div><div class="modal-close" onclick="closeModal('modal-restock')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Product</label><select class="form-input form-select" id="r-product"><option value="">Select product…</option></select></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Quantity Purchased</label><input class="form-input" id="r-qty" type="number" min="1" placeholder="0"></div>
+        <div class="form-group"><label class="form-label">Unit Cost (₵)</label><input class="form-input" id="r-cost" type="number" min="0" placeholder="0.00"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Supplier Discount (₵)</label><input class="form-input" id="r-disc" type="number" min="0" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Shipping Cost (₵)</label><input class="form-input" id="r-ship" type="number" min="0" placeholder="0.00"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Additional Fees (₵)</label><input class="form-input" id="r-fees" type="number" min="0" placeholder="0.00"></div>
+      <div id="r-calc" style="background:var(--off);border-radius:var(--radius-sm);padding:12px;font-size:13px;color:var(--text-soft)">Fill in the form to see cost calculation.</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-restock')">Cancel</button><button class="btn btn-primary" onclick="restock()"><i class="ti ti-package"></i>Confirm Restock</button></div>
+  </div>
+</div>
+
+<!-- Record Sale -->
+<div class="modal-overlay" id="modal-sale">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Record Sale</div><div class="modal-close" onclick="closeModal('modal-sale')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product</label><select class="form-input form-select" id="sl-product" onchange="updateSaleCalc()"><option value="">Select product…</option></select></div>
+        <div class="form-group"><label class="form-label">Quantity</label><input class="form-input" id="sl-qty" type="number" min="1" value="1" oninput="updateSaleCalc()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Selling Price Each (₵)</label><input class="form-input" id="sl-price" type="number" min="0" placeholder="0.00" oninput="updateSaleCalc()"></div>
+        <div class="form-group"><label class="form-label">Customer Discount (₵)</label><input class="form-input" id="sl-disc" type="number" min="0" placeholder="0.00" oninput="updateSaleCalc()"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Delivery Charge (₵)</label><input class="form-input" id="sl-delivery" type="number" min="0" placeholder="0.00" oninput="updateSaleCalc()"></div>
+        <div class="form-group"><label class="form-label">Payment Method</label><select class="form-input form-select" id="sl-payment"><option>Cash</option><option>Mobile Money</option><option>Bank Transfer</option><option>Card</option><option>Credit</option></select></div>
+      </div>
+      <div id="sl-calc" style="background:var(--off);border-radius:var(--radius-sm);padding:12px;font-size:13px;color:var(--text-soft)">Select a product to see profit calculation.</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-sale')">Cancel</button><button class="btn btn-primary" onclick="recordSale()"><i class="ti ti-check"></i>Record Sale</button></div>
+  </div>
+</div>
+
+<!-- Add Expense -->
+<div class="modal-overlay" id="modal-expense">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Expense</div><div class="modal-close" onclick="closeModal('modal-expense')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-group"><label class="form-label">Description</label><input class="form-input" id="ex-desc" placeholder="e.g. Paid rent for June"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Category</label><select class="form-input form-select" id="ex-cat"><option>Rent</option><option>Utilities</option><option>Salaries</option><option>Transportation</option><option>Marketing</option><option>Packaging</option><option>Internet</option><option>Miscellaneous</option></select></div>
+        <div class="form-group"><label class="form-label">Amount (₵)</label><input class="form-input" id="ex-amount" type="number" min="0" placeholder="0.00"></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-expense')">Cancel</button><button class="btn btn-primary" onclick="addExpense()"><i class="ti ti-check"></i>Add Expense</button></div>
+  </div>
+</div>
+
+<!-- Refund -->
+<div class="modal-overlay" id="modal-refund">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Record Refund / Return</div><div class="modal-close" onclick="closeModal('modal-refund')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Product</label><select class="form-input form-select" id="rf-product"><option value="">Select product…</option></select></div>
+        <div class="form-group"><label class="form-label">Quantity Returned</label><input class="form-input" id="rf-qty" type="number" min="1" placeholder="1"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Refund Amount (₵)</label><input class="form-input" id="rf-amount" type="number" min="0" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Reason</label><select class="form-input form-select" id="rf-reason"><option>Damaged</option><option>Wrong item</option><option>Customer changed mind</option><option>Quality issue</option><option>Other</option></select></div>
+      </div>
+      <div class="form-group"><label class="form-label">Restock item?</label><select class="form-input form-select" id="rf-restock"><option value="yes">Yes — return to inventory</option><option value="no">No — write off</option></select></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-refund')">Cancel</button><button class="btn btn-primary" onclick="recordRefund()"><i class="ti ti-check"></i>Record Refund</button></div>
+  </div>
+</div>
+
+<!-- Capital -->
+<div class="modal-overlay" id="modal-capital">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Add Funding / Capital</div><div class="modal-close" onclick="closeModal('modal-capital')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Type</label><select class="form-input form-select" id="cap-type" onchange="toggleLoanFields()"><option>Personal Investment</option><option>Business Loan</option><option>Grant</option><option>Investor Funding</option></select></div>
+        <div class="form-group"><label class="form-label">Amount (₵)</label><input class="form-input" id="cap-amount" type="number" min="0" placeholder="0.00"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Source / Name</label><input class="form-input" id="cap-source" placeholder="e.g. Personal savings, GCB Bank"></div>
+      <div id="loan-fields" style="display:none">
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">Interest Rate (%)</label><input class="form-input" id="cap-rate" type="number" min="0" placeholder="0"></div>
+          <div class="form-group"><label class="form-label">Repayment Date</label><input class="form-input" id="cap-date" type="date"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-capital')">Cancel</button><button class="btn btn-primary" onclick="addCapital()"><i class="ti ti-check"></i>Add Funding</button></div>
+  </div>
+</div>
+
+<!-- Drawing -->
+<div class="modal-overlay" id="modal-drawing">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Record Owner Withdrawal</div><div class="modal-close" onclick="closeModal('modal-drawing')"><i class="ti ti-x"></i></div></div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Amount (₵)</label><input class="form-input" id="dr-amount" type="number" min="0" placeholder="0.00"></div>
+        <div class="form-group"><label class="form-label">Purpose</label><input class="form-input" id="dr-purpose" placeholder="e.g. Personal rent, groceries"></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal('modal-drawing')">Cancel</button><button class="btn btn-primary" onclick="recordDrawing()"><i class="ti ti-check"></i>Record Withdrawal</button></div>
+  </div>
+</div>
+
+<script>
+const state={products:[],sales:[],expenses:[],refunds:[],capital:[],drawings:[]};
+let editMode = { active: false, type: null, index: null };
+const GHS='₵';
+
+function toggleDropdown(e, id){
+  e.stopPropagation();
+  const el = document.getElementById(id);
+  const wasShow = el.classList.contains('show');
+  document.querySelectorAll('.dropdown-content').forEach(d=>d.classList.remove('show'));
+  if(!wasShow) el.classList.add('show');
+}
+
+window.onclick=function(e){
+  if(!e.target.closest('.dropdown')){
+    document.querySelectorAll('.dropdown-content').forEach(d=>d.classList.remove('show'));
+  }
+}
+
+function deleteEntry(type, idx){
+  if(!confirm('Are you sure you want to delete this entry?')) return;
+  const arr = type === 'product' ? state.products : 
+              type === 'sale' ? state.sales : 
+              type === 'expense' ? state.expenses : 
+              type === 'refund' ? state.refunds : 
+              type === 'capital' ? state.capital : 
+              type === 'drawing' ? state.drawings : [];
+  
+  if(arr && arr[idx]){
+    arr.splice(idx, 1);
+    if(type==='product') refreshInventory();
+    if(type==='sale') refreshSales();
+    if(type==='expense') refreshExpenses();
+    if(type==='refund') refreshRefunds();
+    if(type==='capital') refreshCapital();
+    if(type==='drawing') refreshDrawings();
+    refreshDashboard();
+    checkAlerts();
+  }
+}
+
+function startEdit(type, idx){
+  const arr = type === 'product' ? state.products : 
+              type === 'sale' ? state.sales : 
+              type === 'expense' ? state.expenses : 
+              type === 'refund' ? state.refunds : 
+              type === 'capital' ? state.capital : 
+              type === 'drawing' ? state.drawings : [];
+  const data = arr[idx];
+  if(!data) return;
+
+  editMode = { active: true, type, index: idx };
+
+  if(type === 'product'){
+    document.getElementById('p-name').value = data.name;
+    document.getElementById('p-cat').value = data.cat;
+    document.getElementById('p-cost').value = data.cost;
+    document.getElementById('p-sell').value = data.sell;
+    document.getElementById('p-qty').value = data.qty;
+    document.getElementById('p-low').value = data.low;
+    document.getElementById('p-supplier').value = data.supplier;
+    document.querySelector('#modal-product .modal-title').textContent = 'Edit Product';
+    document.querySelector('#modal-product .btn-primary').innerHTML = '<i class="ti ti-check"></i>Update Product';
+    openModal('modal-product');
+  } else if(type === 'sale'){
+    populateProductSelect('sl-product');
+    // Find product index in state.products by name
+    const pIdx = state.products.findIndex(p => p.name === data.product);
+    document.getElementById('sl-product').value = pIdx;
+    document.getElementById('sl-qty').value = data.qty;
+    document.getElementById('sl-price').value = data.price;
+    document.getElementById('sl-disc').value = data.disc;
+    document.getElementById('sl-delivery').value = data.del;
+    document.getElementById('sl-payment').value = data.payment;
+    document.querySelector('#modal-sale .modal-title').textContent = 'Edit Sale';
+    document.querySelector('#modal-sale .btn-primary').innerHTML = '<i class="ti ti-check"></i>Update Sale';
+    updateSaleCalc();
+    openModal('modal-sale');
+  } else if(type === 'expense'){
+    document.getElementById('ex-desc').value = data.desc;
+    document.getElementById('ex-cat').value = data.cat;
+    document.getElementById('ex-amount').value = data.amount;
+    document.querySelector('#modal-expense .modal-title').textContent = 'Edit Expense';
+    document.querySelector('#modal-expense .btn-primary').innerHTML = '<i class="ti ti-check"></i>Update Expense';
+    openModal('modal-expense');
+  } else if(type === 'refund'){
+    populateProductSelect('rf-product');
+    const pIdx = state.products.findIndex(p => p.name === data.product);
+    document.getElementById('rf-product').value = pIdx;
+    document.getElementById('rf-qty').value = data.qty;
+    document.getElementById('rf-amount').value = data.amount;
+    document.getElementById('rf-reason').value = data.reason;
+    document.getElementById('rf-restock').value = data.restocked ? 'yes' : 'no';
+    document.querySelector('#modal-refund .modal-title').textContent = 'Edit Refund';
+    document.querySelector('#modal-refund .btn-primary').innerHTML = '<i class="ti ti-check"></i>Update Refund';
+    openModal('modal-refund');
+  } else if(type === 'capital'){
+    document.getElementById('cap-type').value = data.type;
+    document.getElementById('cap-amount').value = data.amount;
+    document.getElementById('cap-source').value = data.source;
+    document.getElementById('cap-rate').value = data.rate;
+    document.getElementById('cap-date').value = data.repayDate;
+    toggleLoanFields();
+    document.querySelector('#modal-capital .modal-title').textContent = 'Edit Funding';
+    document.querySelector('#modal-capital .btn-primary').innerHTML = '<i class="ti ti-check"></i>Update Funding';
+    openModal('modal-capital');
+  } else if(type === 'drawing'){
+    document.getElementById('dr-amount').value = data.amount;
+    document.getElementById('dr-purpose').value = data.purpose;
+    document.querySelector('#modal-drawing .modal-title').textContent = 'Edit Withdrawal';
+    document.querySelector('#modal-drawing .btn-primary').innerHTML = '<i class="ti ti-check"></i>Update Withdrawal';
+    openModal('modal-drawing');
+  }
+}
+
+function resetEditMode(){
+  editMode = { active: false, type: null, index: null };
+  // Reset modal titles and buttons to default "Add" mode
+  document.querySelector('#modal-product .modal-title').textContent = 'Add Product';
+  document.querySelector('#modal-product .btn-primary').innerHTML = '<i class="ti ti-check"></i>Add Product';
+  document.querySelector('#modal-sale .modal-title').textContent = 'Record Sale';
+  document.querySelector('#modal-sale .btn-primary').innerHTML = '<i class="ti ti-check"></i>Record Sale';
+  document.querySelector('#modal-expense .modal-title').textContent = 'Add Expense';
+  document.querySelector('#modal-expense .btn-primary').innerHTML = '<i class="ti ti-check"></i>Add Expense';
+  document.querySelector('#modal-refund .modal-title').textContent = 'Record Refund / Return';
+  document.querySelector('#modal-refund .btn-primary').innerHTML = '<i class="ti ti-check"></i>Record Refund';
+  document.querySelector('#modal-capital .modal-title').textContent = 'Add Funding / Capital';
+  document.querySelector('#modal-capital .btn-primary').innerHTML = '<i class="ti ti-check"></i>Add Funding';
+  document.querySelector('#modal-drawing .modal-title').textContent = 'Record Owner Withdrawal';
+  document.querySelector('#modal-drawing .btn-primary').innerHTML = '<i class="ti ti-check"></i>Record Withdrawal';
+}
+
+const fmt=(n)=>GHS+parseFloat(n||0).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtn=(n)=>parseFloat(n||0).toLocaleString('en-GH',{minimumFractionDigits:2,maximumFractionDigits:2});
+const today=()=>new Date().toISOString().split('T')[0];
+
+function nav(el,section){
+  document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+  if(el&&el.classList)el.classList.add('active');
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+section).classList.add('active');
+  const titles={dashboard:'Dashboard',inventory:'Inventory',sales:'Sales',expenses:'Expenses',refunds:'Refunds & Returns',capital:'Capital & Loans',drawings:'Owner Drawings',statements:'Financial Statements',ai:'AI Assistant',forecast:'Smart Forecasting',tax:'Tax Preparation'};
+  document.getElementById('page-title').textContent=titles[section]||section;
+  if(section==='dashboard')refreshDashboard();
+  if(section==='statements')refreshStatements();
+  if(section==='forecast')refreshForecast();
+  if(section==='tax')refreshTax();
+}
+
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open'); resetEditMode();}
+function openProductModal(){openModal('modal-product')}
+function openRestockModal(){populateProductSelect('r-product');openModal('modal-restock')}
+function openSaleModal(){populateProductSelect('sl-product');document.getElementById('sl-calc').textContent='Select a product to see profit calculation.';openModal('modal-sale')}
+function openExpenseModal(){openModal('modal-expense')}
+function openRefundModal(){populateProductSelect('rf-product');openModal('modal-refund')}
+function openCapitalModal(){openModal('modal-capital')}
+function openDrawingModal(){openModal('modal-drawing')}
+
+function populateProductSelect(id){
+  const sel=document.getElementById(id);
+  sel.innerHTML='<option value="">Select product…</option>';
+  state.products.forEach((p,i)=>{
+    const o=document.createElement('option');
+    o.value=i;o.textContent=p.name+' ('+p.qty+' in stock)';
+    sel.appendChild(o);
+  });
+}
+
+function addProduct(){
+  const name=document.getElementById('p-name').value.trim();
+  const cat=document.getElementById('p-cat').value;
+  const cost=parseFloat(document.getElementById('p-cost').value)||0;
+  const sell=parseFloat(document.getElementById('p-sell').value)||0;
+  const qty=parseInt(document.getElementById('p-qty').value)||0;
+  const low=parseInt(document.getElementById('p-low').value)||5;
+  const supplier=document.getElementById('p-supplier').value.trim();
+  if(!name){alert('Please enter a product name.');return;}
+  
+  if(editMode.active && editMode.type === 'product'){
+    const p = state.products[editMode.index];
+    p.name = name; p.cat = cat; p.cost = cost; p.sell = sell; p.qty = qty; p.low = low; p.supplier = supplier;
+  } else {
+    state.products.push({name,cat,cost,sell,qty,low,supplier,restockHistory:[]});
+  }
+  
+  closeModal('modal-product');
+  ['p-name','p-cost','p-sell','p-qty','p-low','p-supplier'].forEach(id=>document.getElementById(id).value='');
+  refreshInventory();refreshDashboard();checkAlerts();
+}
+
+function refreshInventory(){
+  const tbody=document.getElementById('inv-table-body');
+  const totalVal=state.products.reduce((a,p)=>a+p.cost*p.qty,0);
+  document.getElementById('inv-summary').textContent=state.products.length+' products · '+fmt(totalVal)+' total value';
+  if(!state.products.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="ti ti-package"></i></div><div class="empty-title">No products yet</div><div class="empty-desc">Add your first product to start tracking inventory.</div><button class="btn btn-primary" onclick="openProductModal()"><i class="ti ti-plus"></i>Add Product</button></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML=state.products.map((p,i)=>{
+    const margin=p.sell>0?((p.sell-p.cost)/p.sell*100).toFixed(1):0;
+    const low=p.qty<=p.low;
+    const statusBadge=low?'<span class="badge badge-red">Low Stock</span>':'<span class="badge badge-green">In Stock</span>';
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:10px"><div class="prod-thumb"><i class="ti ti-package"></i></div><div><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text-soft)">${p.supplier||'No supplier'}</div></div></div></td>
+      <td><span class="badge badge-teal">${p.cat}</span></td>
+      <td style="font-weight:500;${p.qty<=p.low?'color:var(--red)':''}">${p.qty}</td>
+      <td>${fmt(p.cost)}</td>
+      <td>${fmt(p.sell)}</td>
+      <td><span class="badge ${margin>=30?'badge-green':margin>=15?'badge-amber':'badge-red'}">${margin}%</span></td>
+      <td>${statusBadge}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn btn-outline btn-sm" onclick="openRestockModal()">Restock</button>
+          <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-inv-${i}')"><i class="ti ti-dots-vertical"></i></button>
+            <div class="dropdown-content" id="drop-inv-${i}">
+              <div class="dropdown-item" onclick="startEdit('product', ${i})"><i class="ti ti-edit"></i>Edit</div>
+              <div class="dropdown-item danger" onclick="deleteEntry('product', ${i})"><i class="ti ti-trash"></i>Delete</div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function restock(){
+  const idx=parseInt(document.getElementById('r-product').value);
+  if(isNaN(idx)){alert('Select a product.');return;}
+  const qty=parseInt(document.getElementById('r-qty').value)||0;
+  const cost=parseFloat(document.getElementById('r-cost').value)||0;
+  const disc=parseFloat(document.getElementById('r-disc').value)||0;
+  const ship=parseFloat(document.getElementById('r-ship').value)||0;
+  const fees=parseFloat(document.getElementById('r-fees').value)||0;
+  if(!qty){alert('Enter quantity.');return;}
+  const p=state.products[idx];
+  const totalCost=(cost*qty)-disc+ship+fees;
+  const perUnit=totalCost/qty;
+  p.qty+=qty;
+  p.cost=perUnit;
+  p.restockHistory.push({date:today(),qty,totalCost,perUnit});
+  state.expenses.push({date:today(),desc:'Restock: '+p.name,cat:'Inventory',amount:totalCost});
+  closeModal('modal-restock');
+  refreshInventory();refreshExpenses();refreshDashboard();checkAlerts();
+}
+
+function updateSaleCalc(){
+  const idx=document.getElementById('sl-product').value;
+  const qty=parseInt(document.getElementById('sl-qty').value)||1;
+  const price=parseFloat(document.getElementById('sl-price').value)||0;
+  const disc=parseFloat(document.getElementById('sl-disc').value)||0;
+  const del=parseFloat(document.getElementById('sl-delivery').value)||0;
+  const calc=document.getElementById('sl-calc');
+  if(idx===''||idx===undefined){calc.textContent='Select a product.';return;}
+  const p=state.products[parseInt(idx)];
+  const rev=(price*qty)-disc+del;
+  const cogs=p.cost*qty;
+  const profit=rev-cogs;
+  const margin=rev>0?(profit/rev*100).toFixed(1):0;
+  calc.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center">
+    <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Revenue</div><div style="font-weight:600;color:var(--text)">${fmt(rev)}</div></div>
+    <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Gross Profit</div><div style="font-weight:600;color:${profit>=0?'var(--green)':'var(--red)'}">${fmt(profit)}</div></div>
+    <div><div style="font-size:11px;color:var(--text-soft);margin-bottom:2px">Margin</div><div style="font-weight:600;color:${margin>=20?'var(--green)':margin>=10?'var(--amber)':'var(--red)'}">${margin}%</div></div>
+  </div>`;
+}
+
+function recordSale(){
+  const idx=document.getElementById('sl-product').value;
+  if(idx===''||idx===undefined){alert('Select a product.');return;}
+  const p=state.products[parseInt(idx)];
+  const qty=parseInt(document.getElementById('sl-qty').value)||1;
+  const price=parseFloat(document.getElementById('sl-price').value)||p.sell;
+  const disc=parseFloat(document.getElementById('sl-disc').value)||0;
+  const del=parseFloat(document.getElementById('sl-delivery').value)||0;
+  const payment=document.getElementById('sl-payment').value;
+  
+  if(!editMode.active && qty>p.qty){alert('Not enough stock! Available: '+p.qty);return;}
+  
+  const rev=(price*qty)-disc+del;
+  const cogs=p.cost*qty;
+  const profit=rev-cogs;
+  const margin=rev>0?(profit/rev*100).toFixed(1):0;
+
+  if(editMode.active && editMode.type === 'sale'){
+    const s = state.sales[editMode.index];
+    const oldP = state.products.find(prod => prod.name === s.product);
+    if(oldP) oldP.qty += s.qty; 
+    p.qty -= qty; 
+    s.product = p.name; s.qty = qty; s.price = price; s.disc = disc; s.del = del;
+    s.rev = rev; s.cogs = cogs; s.profit = profit; s.margin = margin; s.payment = payment;
+  } else {
+    p.qty-=qty;
+    state.sales.push({date:today(),product:p.name,qty,price,disc,del,rev,cogs,profit,margin,payment});
+  }
+  
+  closeModal('modal-sale');
+  refreshSales();refreshInventory();refreshDashboard();checkAlerts();
+}
+
+function filterSales(el, period){
+  document.querySelectorAll('#sec-sales .pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  refreshSales(period);
+}
+
+function refreshSales(period = 'all'){
+  const tbody=document.getElementById('sales-table-body');
+  let visSales = state.sales.map((s, i) => ({...s, originalIdx: i}));
+  
+  if(period === 'today'){
+    const t = today();
+    visSales = visSales.filter(s => s.date === t);
+  } else if(period === 'week'){
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    visSales = visSales.filter(s => new Date(s.date) >= weekAgo);
+  }
+
+  const totalRev=visSales.reduce((a,s)=>a+s.rev,0);
+  const totalProfit=visSales.reduce((a,s)=>a+s.profit,0);
+  const totalUnits=visSales.reduce((a,s)=>a+s.qty,0);
+  document.getElementById('s-revenue').textContent=fmt(totalRev);
+  document.getElementById('s-profit').textContent=fmt(totalProfit);
+  document.getElementById('s-units').textContent=totalUnits;
+  
+  if(!visSales.length){
+    tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="ti ti-shopping-cart"></i></div><div class="empty-title">No sales found</div><div class="empty-desc">Try changing the filter or record a new sale.</div><button class="btn btn-primary" onclick="openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button></div></td></tr>`;
+    return;
+  }
+  
+  tbody.innerHTML=[...visSales].reverse().map((s,i)=>{
+    return`<tr>
+      <td style="white-space:nowrap;font-size:12px;color:var(--text-soft)">${s.date}</td>
+      <td style="font-weight:500">${s.product}</td>
+      <td>${s.qty}</td>
+      <td>${fmt(s.price)}</td>
+      <td>${s.disc>0?fmt(s.disc):'-'}</td>
+      <td style="font-weight:500">${fmt(s.rev)}</td>
+      <td style="font-weight:500;color:${s.profit>=0?'var(--green)':'var(--red)'}">${fmt(s.profit)}</td>
+      <td><span class="badge ${s.margin>=20?'badge-green':s.margin>=10?'badge-amber':'badge-red'}">${s.margin}%</span></td>
+      <td>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+          <span class="badge badge-teal">${s.payment}</span>
+          <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-sale-${i}')"><i class="ti ti-dots-vertical"></i></button>
+            <div class="dropdown-content" id="drop-sale-${i}">
+              <div class="dropdown-item" onclick="startEdit('sale', ${s.originalIdx})"><i class="ti ti-edit"></i>Edit</div>
+              <div class="dropdown-item danger" onclick="deleteEntry('sale', ${s.originalIdx})"><i class="ti ti-trash"></i>Delete</div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function addExpense(){
+  const desc=document.getElementById('ex-desc').value.trim();
+  const cat=document.getElementById('ex-cat').value;
+  const amount=parseFloat(document.getElementById('ex-amount').value)||0;
+  if(!desc||!amount){alert('Fill all fields.');return;}
+  
+  if(editMode.active && editMode.type === 'expense'){
+    const e = state.expenses[editMode.index];
+    e.desc = desc; e.cat = cat; e.amount = amount;
+  } else {
+    state.expenses.push({date:today(),desc,cat,amount});
+  }
+  
+  closeModal('modal-expense');
+  ['ex-desc','ex-amount'].forEach(id=>document.getElementById(id).value='');
+  refreshExpenses();refreshDashboard();
+}
+
+let expChartInst=null,stmtChartInst=null;
+function refreshExpenses(){
+  const tbody=document.getElementById('exp-table-body');
+  const visExpIndices = state.expenses.map((e, i) => ({...e, originalIdx: i})).filter(e => e.cat !== 'Inventory');
+  const total=visExpIndices.reduce((a,e)=>a+e.amount,0);
+  document.getElementById('exp-summary').textContent=fmt(total)+' total this month';
+  if(!visExpIndices.length){
+    tbody.innerHTML='<tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text-soft)">No expenses recorded yet.</td></tr>';
+    document.getElementById('recent-expenses').innerHTML='<div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-receipt"></i></div><div class="empty-title">No expenses yet</div></div>';
+    return;
+  }
+  tbody.innerHTML=[...visExpIndices].reverse().map((e, i)=>`<tr>
+    <td style="font-size:12px;color:var(--text-soft)">${e.date}</td>
+    <td>${e.desc}</td>
+    <td><span class="badge badge-amber">${e.cat}</span></td>
+    <td>
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <span style="font-weight:500">${fmt(e.amount)}</span>
+        <div class="dropdown">
+          <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-exp-${i}')"><i class="ti ti-dots-vertical"></i></button>
+          <div class="dropdown-content" id="drop-exp-${i}">
+            <div class="dropdown-item" onclick="startEdit('expense', ${e.originalIdx})"><i class="ti ti-edit"></i>Edit</div>
+            <div class="dropdown-item danger" onclick="deleteEntry('expense', ${e.originalIdx})"><i class="ti ti-trash"></i>Delete</div>
+          </div>
+        </div>
+      </div>
+    </td>
+  </tr>`).join('');
+  
+  document.getElementById('recent-expenses').innerHTML=visExpIndices.slice(-4).reverse().map(e=>`<div class="stat-row"><span style="color:var(--text-soft)">${e.desc}</span><span style="font-weight:500">${fmt(e.amount)}</span></div>`).join('');
+  const catMap={};
+  visExpIndices.forEach(e=>{catMap[e.cat]=(catMap[e.cat]||0)+e.amount});
+  const cats=Object.keys(catMap),vals=Object.values(catMap);
+  const colors=['#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#f97316'];
+  const ctx=document.getElementById('expChart').getContext('2d');
+  if(expChartInst)expChartInst.destroy();
+  expChartInst=new Chart(ctx,{type:'doughnut',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors.slice(0,cats.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+  document.getElementById('exp-legend').innerHTML=cats.map((c,i)=>`<span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text-soft)"><span style="width:8px;height:8px;border-radius:2px;background:${colors[i]};display:inline-block"></span>${c}</span>`).join('');
+}
+
+function recordRefund(){
+  const idx=document.getElementById('rf-product').value;
+  if(idx===''||idx===undefined){alert('Select a product.');return;}
+  const p=state.products[parseInt(idx)];
+  const qty=parseInt(document.getElementById('rf-qty').value)||1;
+  const amount=parseFloat(document.getElementById('rf-amount').value)||0;
+  const reason=document.getElementById('rf-reason').value;
+  const restock=document.getElementById('rf-restock').value;
+
+  if(editMode.active && editMode.type === 'refund'){
+    const r = state.refunds[editMode.index];
+    const oldP = state.products.find(prod => prod.name === r.product);
+    if(r.restocked && oldP) oldP.qty -= r.qty;
+    if(restock==='yes') p.qty += qty;
+    r.product = p.name; r.qty = qty; r.amount = amount; r.reason = reason; r.restocked = restock==='yes';
+  } else {
+    if(restock==='yes')p.qty+=qty;
+    state.refunds.push({date:today(),product:p.name,qty,reason,amount,restocked:restock==='yes'});
+  }
+  
+  closeModal('modal-refund');
+  refreshRefunds();refreshDashboard();
+}
+
+function refreshRefunds(){
+  const tbody=document.getElementById('refund-table-body');
+  const visRefunds = state.refunds.map((r, i) => ({...r, originalIdx: i}));
+  const total=visRefunds.reduce((a,r)=>a+r.amount,0);
+  document.getElementById('refund-summary').textContent=fmt(total)+' total refunded';
+  if(!visRefunds.length){
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="ti ti-arrow-back-up"></i></div><div class="empty-title">No refunds recorded</div><div class="empty-desc">Customer returns and refunds will appear here.</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML=[...visRefunds].reverse().map((r, i)=>{
+    return`<tr>
+      <td style="font-size:12px;color:var(--text-soft)">${r.date}</td>
+      <td style="font-weight:500">${r.product}</td>
+      <td>${r.qty}</td>
+      <td><span class="badge badge-amber">${r.reason}</span></td>
+      <td style="font-weight:500;color:var(--red)">${fmt(r.amount)}</td>
+      <td>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          ${r.restocked?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-red">No</span>'}
+          <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-refund-${i}')"><i class="ti ti-dots-vertical"></i></button>
+            <div class="dropdown-content" id="drop-refund-${i}">
+              <div class="dropdown-item" onclick="startEdit('refund', ${r.originalIdx})"><i class="ti ti-edit"></i>Edit</div>
+              <div class="dropdown-item danger" onclick="deleteEntry('refund', ${r.originalIdx})"><i class="ti ti-trash"></i>Delete</div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function addCapital(){
+  const type=document.getElementById('cap-type').value;
+  const amount=parseFloat(document.getElementById('cap-amount').value)||0;
+  const source=document.getElementById('cap-source').value.trim();
+  const rate=parseFloat(document.getElementById('cap-rate').value)||0;
+  const date=document.getElementById('cap-date').value;
+  if(!amount){alert('Enter an amount.');return;}
+  
+  if(editMode.active && editMode.type === 'capital'){
+    const c = state.capital[editMode.index];
+    c.type = type; c.amount = amount; c.source = source; c.rate = rate; c.repayDate = date;
+    c.outstanding = type==='Business Loan' ? amount : 0;
+  } else {
+    state.capital.push({date:today(),type,amount,source,rate,repayDate:date,outstanding:type==='Business Loan'?amount:0});
+  }
+  
+  closeModal('modal-capital');
+  refreshCapital();refreshDashboard();
+}
+
+function refreshCapital(){
+  const totalFunding=state.capital.reduce((a,c)=>a+c.amount,0);
+  const totalLoans=state.capital.filter(c=>c.type==='Business Loan').reduce((a,c)=>a+c.outstanding,0);
+  document.getElementById('capital-summary').textContent=fmt(totalFunding)+' total funding · '+fmt(totalLoans)+' outstanding loans';
+  const capList=document.getElementById('capital-list');
+  if(!state.capital.length){
+    capList.innerHTML='<div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-coin"></i></div><div class="empty-title">No funding recorded</div><div class="empty-desc">Record investments, loans, and grants here.</div><button class="btn btn-primary" onclick="openCapitalModal()"><i class="ti ti-plus"></i>Add Funding</button></div>';
+  }else{
+    capList.innerHTML=state.capital.map((c, i)=>`
+      <div class="loan-card" style="position:relative">
+        <div class="dropdown" style="position:absolute;right:12px;top:12px">
+          <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-cap-${i}')"><i class="ti ti-dots-vertical"></i></button>
+          <div class="dropdown-content" id="drop-cap-${i}">
+            <div class="dropdown-item" onclick="startEdit('capital', ${i})"><i class="ti ti-edit"></i>Edit</div>
+            <div class="dropdown-item danger" onclick="deleteEntry('capital', ${i})"><i class="ti ti-trash"></i>Delete</div>
+          </div>
+        </div>
+        <div class="loan-header">
+          <div class="loan-name">${c.source||c.type}</div>
+          <span class="badge ${c.type==='Business Loan'?'badge-red':'badge-green'}">${c.type}</span>
+        </div>
+        <div style="font-family:'Syne',sans-serif;font-size:20px;font-weight:700;color:var(--text)">${fmt(c.amount)}</div>
+        <div class="loan-meta">${c.date}${c.rate?` · ${c.rate}% interest`:''}${c.repayDate?` · Due: ${c.repayDate}`:''}</div>
+      </div>`).join('');
+  }
+  const loanList=document.getElementById('loan-list');
+  const loans=state.capital.filter(c=>c.type==='Business Loan');
+  if(!loans.length){
+    loanList.innerHTML='<div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-credit-card"></i></div><div class="empty-title">No active loans</div><div class="empty-desc">Loans with repayment schedules will appear here.</div></div>';
+  }else{
+    loanList.innerHTML=loans.map(l=>{
+      const pct=Math.min(100,100-(l.outstanding/l.amount*100));
+      return`<div class="loan-card"><div class="loan-header"><div class="loan-name">${l.source||'Loan'}</div><span class="badge badge-red">${l.rate}% p.a.</span></div><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px"><span style="color:var(--text-soft)">Outstanding</span><span style="font-weight:600;color:var(--red)">${fmt(l.outstanding)}</span></div><div class="progress"><div class="progress-bar" style="width:${pct}%;background:var(--green)"></div></div><div style="font-size:11px;color:var(--text-soft);margin-top:4px">Due: ${l.repayDate||'Not set'}</div></div>`;
+    }).join('');
+  }
+}
+
+function toggleLoanFields(){
+  const type=document.getElementById('cap-type').value;
+  document.getElementById('loan-fields').style.display=type==='Business Loan'?'block':'none';
+}
+
+function recordDrawing(){
+  const amount=parseFloat(document.getElementById('dr-amount').value)||0;
+  const purpose=document.getElementById('dr-purpose').value.trim();
+  if(!amount){alert('Enter an amount.');return;}
+  
+  if(editMode.active && editMode.type === 'drawing'){
+    const d = state.drawings[editMode.index];
+    d.amount = amount; d.purpose = purpose;
+  } else {
+    const cash=calcCash();
+    if(amount>cash){if(!confirm('This withdrawal exceeds available cash ('+fmt(cash)+'). Continue?'))return;}
+    state.drawings.push({date:today(),purpose,amount});
+  }
+  
+  closeModal('modal-drawing');
+  ['dr-amount','dr-purpose'].forEach(id=>document.getElementById(id).value='');
+  refreshDrawings();refreshDashboard();
+}
+
+function refreshDrawings(){
+  const total=state.drawings.reduce((a,d)=>a+d.amount,0);
+  document.getElementById('drawing-summary').textContent=fmt(total)+' withdrawn this month';
+  const tbody=document.getElementById('drawing-table-body');
+  if(!state.drawings.length){
+    tbody.innerHTML='<tr><td colspan="4"><div class="empty-state"><div class="empty-icon"><i class="ti ti-wallet"></i></div><div class="empty-title">No withdrawals</div><div class="empty-desc">Record money you take from the business for personal use.</div></div></td></tr>';
+    return;
+  }
+  let running=calcCash()+state.drawings.reduce((a,d)=>a+d.amount,0);
+  tbody.innerHTML=state.drawings.map((d, i)=>{
+    running-=d.amount;
+    return`<tr>
+      <td style="font-size:12px;color:var(--text-soft)">${d.date}</td>
+      <td>${d.purpose||'—'}</td>
+      <td style="font-weight:500;color:var(--red)">${fmt(d.amount)}</td>
+      <td>
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <span style="font-weight:500">${fmt(running)}</span>
+          <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-draw-${i}')"><i class="ti ti-dots-vertical"></i></button>
+            <div class="dropdown-content" id="drop-draw-${i}">
+              <div class="dropdown-item" onclick="startEdit('drawing', ${i})"><i class="ti ti-edit"></i>Edit</div>
+              <div class="dropdown-item danger" onclick="deleteEntry('drawing', ${i})"><i class="ti ti-trash"></i>Delete</div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function calcRevenue(){return state.sales.reduce((a,s)=>a+s.rev,0)-state.refunds.reduce((a,r)=>a+r.amount,0)}
+function calcCOGS(){return state.sales.reduce((a,s)=>a+s.cogs,0)}
+function calcExpenses(){return state.expenses.filter(e=>e.cat!=='Inventory').reduce((a,e)=>a+e.amount,0)}
+function calcCapital(){return state.capital.reduce((a,c)=>a+c.amount,0)}
+function calcDrawings(){return state.drawings.reduce((a,d)=>a+d.amount,0)}
+function calcRestockCost(){return state.expenses.filter(e=>e.cat==='Inventory').reduce((a,e)=>a+e.amount,0)}
+function calcCash(){
+  return calcRevenue()+calcCapital()-calcExpenses()-calcRestockCost()-calcDrawings();
+}
+
+function refreshDashboard(){
+  const rev=calcRevenue();
+  const exp=calcExpenses();
+  const restockCost=calcRestockCost();
+  const totalExp=exp+restockCost;
+  const profit=rev-totalExp;
+  const margin=rev>0?(profit/rev*100).toFixed(1):0;
+  const invVal=state.products.reduce((a,p)=>a+p.cost*p.qty,0);
+  const cash=calcCash();
+  document.getElementById('m-revenue').textContent=fmt(rev);
+  document.getElementById('m-expenses').textContent=fmt(totalExp);
+  document.getElementById('m-profit').textContent=fmt(profit);
+  document.getElementById('m-inv').textContent=fmt(invVal);
+  document.getElementById('m-cash').textContent=fmt(cash);
+  document.getElementById('m-inv-items').innerHTML=`<i class="ti ti-package" style="font-size:11px"></i>${state.products.length} products`;
+  const profitEl=document.getElementById('m-profit-margin');
+  profitEl.className='metric-change '+(profit>=0?'up':'down');
+  profitEl.innerHTML=`<i class="ti ti-${profit>=0?'trending-up':'trending-down'}" style="font-size:11px"></i>${margin}% margin`;
+  updateDashChart();
+  updateTopProducts();
+}
+
+let dashChartInst=null;
+function updateDashChart(){
+  const rev=calcRevenue();const exp=calcExpenses()+calcRestockCost();
+  const ctx=document.getElementById('dashChart').getContext('2d');
+  if(dashChartInst)dashChartInst.destroy();
+  dashChartInst=new Chart(ctx,{type:'bar',data:{labels:['Revenue','Expenses','Net Profit'],datasets:[{data:[rev,exp,rev-exp],backgroundColor:['#0ea5e9','#ef4444',rev-exp>=0?'#10b981':'#f59e0b'],borderRadius:6,borderWidth:0}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>GHS+v.toLocaleString()},grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}}});
+}
+
+function updateTopProducts(){
+  const salesMap={};
+  state.sales.forEach(s=>{salesMap[s.product]=(salesMap[s.product]||{rev:0,profit:0,qty:0});salesMap[s.product].rev+=s.rev;salesMap[s.product].profit+=s.profit;salesMap[s.product].qty+=s.qty;});
+  const sorted=Object.entries(salesMap).sort((a,b)=>b[1].rev-a[1].rev).slice(0,5);
+  const el=document.getElementById('top-products-list');
+  if(!sorted.length){el.innerHTML='<div class="empty-state" style="padding:30px 20px"><div class="empty-icon"><i class="ti ti-chart-bar"></i></div><div class="empty-title">No sales yet</div></div>';return;}
+  const maxRev=sorted[0][1].rev;
+  el.innerHTML=sorted.map(([name,d])=>`<div style="margin-bottom:12px"><div style="display:flex;justify-content:space-between;margin-bottom:4px"><span style="font-weight:500;font-size:13px">${name}</span><span style="font-size:12px;color:var(--text-soft)">${fmt(d.rev)}</span></div><div class="progress"><div class="progress-bar" style="width:${(d.rev/maxRev*100).toFixed(0)}%"></div></div></div>`).join('');
+}
+
+function checkAlerts(){
+  const alerts=document.getElementById('alerts-list');
+  const items=[];
+  state.products.forEach(p=>{if(p.qty<=p.low)items.push(`<div class="alert alert-warning"><i class="ti ti-alert-triangle" style="font-size:16px;flex-shrink:0"></i><div><strong>${p.name}</strong> is low on stock — ${p.qty} units remaining.</div></div>`);});
+  const lowCount=state.products.filter(p=>p.qty<=p.low).length;
+  const badge=document.getElementById('lowstock-badge');
+  if(lowCount>0){badge.style.display='';badge.textContent=lowCount;}else{badge.style.display='none';}
+  if(!items.length)items.push('<div class="alert alert-success"><i class="ti ti-check" style="font-size:16px;flex-shrink:0"></i><div>All inventory levels are healthy.</div></div>');
+  alerts.innerHTML=items.join('');
+}
+
+function refreshStatements(){
+  const rev=calcRevenue();const cogs=calcCOGS();const gross=rev-cogs;
+  const opex=calcExpenses();const net=gross-opex;
+  document.getElementById('pnl-rev').textContent=fmt(rev);
+  document.getElementById('pnl-cogs').textContent='('+fmt(cogs)+')';
+  document.getElementById('pnl-gross').textContent=fmt(gross);
+  document.getElementById('pnl-opex').textContent='('+fmt(opex)+')';
+  const netEl=document.getElementById('pnl-net');
+  netEl.textContent=fmt(net);netEl.style.color=net>=0?'var(--green)':'var(--red)';
+  const cash=calcCash();const invVal=state.products.reduce((a,p)=>a+p.cost*p.qty,0);
+  const totalAssets=cash+invVal;const loans=state.capital.filter(c=>c.type==='Business Loan').reduce((a,c)=>a+c.outstanding,0);
+  const draw=calcDrawings();const equity=totalAssets-loans-draw;
+  document.getElementById('bs-cash').textContent=fmt(cash);
+  document.getElementById('bs-inv').textContent=fmt(invVal);
+  document.getElementById('bs-assets').textContent=fmt(totalAssets);
+  document.getElementById('bs-loans').textContent=fmt(loans);
+  document.getElementById('bs-draw').textContent=fmt(draw);
+  document.getElementById('bs-equity').textContent=fmt(equity);
+  const inflows=rev+calcCapital();
+  const outflows=calcExpenses()+calcRestockCost()+draw;
+  const netCF=inflows-outflows;
+  document.getElementById('cf-in').textContent=fmt(inflows);
+  document.getElementById('cf-out').textContent=fmt(outflows);
+  document.getElementById('cf-net').textContent=fmt(netCF);
+  document.getElementById('cf-avail').textContent=fmt(cash);
+  const visExp=state.expenses.filter(e=>e.cat!=='Inventory');
+  if(visExp.length){
+    const catMap={};visExp.forEach(e=>{catMap[e.cat]=(catMap[e.cat]||0)+e.amount});
+    const cats=Object.keys(catMap),vals=Object.values(catMap);
+    const colors=['#0ea5e9','#10b981','#f59e0b','#ef4444','#8b5cf6','#ec4899','#06b6d4','#f97316'];
+    const ctx2=document.getElementById('stmtChart').getContext('2d');
+    if(stmtChartInst)stmtChartInst.destroy();
+    stmtChartInst=new Chart(ctx2,{type:'pie',data:{labels:cats,datasets:[{data:vals,backgroundColor:colors.slice(0,cats.length),borderWidth:2,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{size:11},boxWidth:12}}}}});
+  }
+}
+
+function refreshTax(){
+  const rev=calcRevenue();const exp=calcExpenses();
+  const vat=rev*0.15;const profit=rev-exp-calcCOGS();
+  document.getElementById('tax-rev').textContent=fmt(rev);
+  document.getElementById('tax-ded').textContent=fmt(exp);
+  document.getElementById('tax-vat').textContent=fmt(vat);
+  document.getElementById('tax-profit').textContent=fmt(profit);
+}
+
+let forecastChartInst=null;
+function refreshForecast(){
+  const rev=calcRevenue();const exp=calcExpenses()+calcRestockCost();
+  const fcRev=rev*1.08;const fcExp=exp*1.05;const fcProfit=fcRev-fcExp;
+  document.getElementById('fc-rev').textContent=fmt(fcRev);
+  document.getElementById('fc-exp').textContent=fmt(fcExp);
+  document.getElementById('fc-profit').textContent=fmt(fcProfit);
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug'];
+  const baseRev=rev/6||0;
+  const revData=months.map((_,i)=>i<6?Math.max(0,baseRev*(0.85+Math.random()*.3)):null);
+  const fcData=months.map((_,i)=>i>=5?baseRev*(1.05+i*.03):null);
+  const ctx=document.getElementById('forecastChart').getContext('2d');
+  if(forecastChartInst)forecastChartInst.destroy();
+  forecastChartInst=new Chart(ctx,{type:'line',data:{labels:months,datasets:[{label:'Actual',data:revData,borderColor:'#0ea5e9',backgroundColor:'rgba(14,165,233,.08)',tension:.4,fill:true,spanGaps:false},{label:'Forecast',data:fcData,borderColor:'#10b981',borderDash:[6,4],backgroundColor:'rgba(16,185,129,.06)',tension:.4,fill:true,spanGaps:false}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{size:11},boxWidth:12}}},scales:{y:{beginAtZero:true,ticks:{callback:v=>GHS+v.toLocaleString()},grid:{color:'rgba(0,0,0,.04)'}},x:{grid:{display:false}}}}});
+  if(state.products.length){
+    const lowOnes=state.products.filter(p=>p.qty<=p.low*2);
+    document.getElementById('stock-alerts').innerHTML=lowOnes.length?lowOnes.map(p=>`<div class="alert alert-warning"><i class="ti ti-alert-triangle" style="font-size:16px;flex-shrink:0"></i><div><strong>${p.name}</strong>: ${p.qty} units left. At current sales pace, restock recommended soon.</div></div>`).join(''):'<div class="alert alert-success"><i class="ti ti-check" style="font-size:16px;flex-shrink:0"></i>No inventory shortages predicted in the next 30 days.</div>';
+  }
+}
+
+function stmtTab(el,id){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['pnl','balance','cashflow'].forEach(s=>document.getElementById('stmt-'+s).style.display=s===id?'':'none');
+}
+
+function sendChat(){
+  const input=document.getElementById('chat-input');
+  const msg=input.value.trim();
+  if(!msg)return;
+  const msgs=document.getElementById('chat-messages');
+  msgs.innerHTML+=`<div class="chat-msg user">${msg}</div>`;
+  input.value='';
+  msgs.scrollTop=msgs.scrollHeight;
+  setTimeout(()=>{
+    const reply=generateAIReply(msg);
+    msgs.innerHTML+=`<div class="chat-msg ai">${reply}</div>`;
+    msgs.scrollTop=msgs.scrollHeight;
+  },800);
+}
+
+function quickPrompt(btn){
+  document.getElementById('chat-input').value=btn.textContent;
+  sendChat();
+}
+
+function generateAIReply(q){
+  const lower=q.toLowerCase();
+  const rev=calcRevenue();const exp=calcExpenses()+calcRestockCost();const profit=rev-exp;
+  const margin=rev>0?(profit/rev*100).toFixed(1):0;
+  if(lower.includes('profit')||lower.includes('making')){
+    if(!rev)return"You haven't recorded any sales yet. Add your first sale to start tracking profitability.";
+    return`Your current net profit is <strong>${fmt(profit)}</strong> on <strong>${fmt(rev)}</strong> in revenue — a <strong>${margin}%</strong> margin. ${profit>0?'Keep going, the business is profitable!':'Consider reviewing your pricing or reducing expenses to improve margins.'}`;
+  }
+  if(lower.includes('restock')||lower.includes('inventory')){
+    const low=state.products.filter(p=>p.qty<=p.low);
+    if(!low.length)return'All your products are well-stocked. No immediate restocking needed.';
+    return`I recommend restocking: <strong>${low.map(p=>p.name+' ('+p.qty+' left)').join(', ')}</strong>. These are at or below your low stock threshold.`;
+  }
+  if(lower.includes('expense')||lower.includes('cost')){
+    if(!exp)return"No expenses recorded yet. Add your business expenses to track spending.";
+    const top=Object.entries(state.expenses.filter(e=>e.cat!=='Inventory').reduce((a,e)=>{a[e.cat]=(a[e.cat]||0)+e.amount;return a;},{})).sort((a,b)=>b[1]-a[1])[0];
+    return`Your total expenses are <strong>${fmt(exp)}</strong>. ${top?`Your biggest cost category is <strong>${top[0]}</strong> at ${fmt(top[1])}.`:''}  Consider reviewing recurring costs to find savings opportunities.`;
+  }
+  if(lower.includes('revenue')||lower.includes('predict')||lower.includes('next month')){
+    if(!rev)return"No sales data yet to generate a forecast. Start recording sales first.";
+    return`Based on your current trajectory, I estimate next month's revenue around <strong>${fmt(rev*1.08)}</strong> — assuming ~8% growth. Focus on your best-performing products to hit this target.`;
+  }
+  if(lower.includes('growing')||lower.includes('growing')){
+    if(!rev)return"Add some transactions first so I can analyze your business health.";
+    return profit>0?`Your business is <strong>profitable</strong> with ${margin}% margins. Revenue is ${fmt(rev)} and you have ${fmt(calcCash())} in cash. Keep the momentum going!`:`Your business is currently operating at a <strong>loss of ${fmt(Math.abs(profit))}</strong>. I recommend reviewing your pricing and cutting non-essential expenses.`;
+  }
+  return`I analyzed your business data. You have ${state.products.length} products, ${state.sales.length} sales, and ${state.expenses.length} expenses recorded. ${rev?'Net profit: '+fmt(profit)+'.':''} What specific aspect would you like to dig into?`;
+}
+
+document.getElementById('r-product').addEventListener('change',updateRestockCalc);
+['r-qty','r-cost','r-disc','r-ship','r-fees'].forEach(id=>{
+  const el=document.getElementById(id);
+  if(el)el.addEventListener('input',updateRestockCalc);
+});
+function updateRestockCalc(){
+  const qty=parseInt(document.getElementById('r-qty').value)||0;
+  const cost=parseFloat(document.getElementById('r-cost').value)||0;
+  const disc=parseFloat(document.getElementById('r-disc').value)||0;
+  const ship=parseFloat(document.getElementById('r-ship').value)||0;
+  const fees=parseFloat(document.getElementById('r-fees').value)||0;
+  if(!qty)return;
+  const total=(cost*qty)-disc+ship+fees;
+  const per=total/qty;
+  document.getElementById('r-calc').innerHTML=`Total cost: <strong>${fmt(total)}</strong> · Cost per unit: <strong>${fmt(per)}</strong>`;
+}
+
+document.querySelectorAll('.modal-overlay').forEach(m=>{
+  m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+});
+
+refreshDashboard();checkAlerts();
+</script>
+</body>
+</html>
