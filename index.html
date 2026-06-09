@@ -248,6 +248,11 @@ tr:hover td{background:var(--off)}
     border-left: none;
     border-right: none;
   }
+
+  /* Hide less critical columns on small mobile */
+  .hide-mobile {
+    display: none !important;
+  }
   
   /* Tabs stacking */
   .tabs {
@@ -398,17 +403,21 @@ tr:hover td{background:var(--off)}
     <!-- INVENTORY -->
     <div class="section" id="sec-inventory">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div>
+        <div style="display:flex;flex-direction:column;gap:8px">
           <div style="font-size:13px;color:var(--text-soft)" id="inv-summary">0 products · ₵0 total value</div>
+          <div style="position:relative;width:200px">
+            <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px"></i>
+            <input type="text" placeholder="Search products..." oninput="searchTable('inventory', this.value)" style="padding:6px 12px 6px 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;width:100%;outline:none">
+          </div>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn btn-outline btn-sm" onclick="openRestockModal()"><i class="ti ti-plus"></i>Restock</button>
+          <button class="btn btn-outline btn-sm hide-mobile" onclick="openRestockModal()"><i class="ti ti-plus"></i>Restock</button>
           <button class="btn btn-primary btn-sm" onclick="openProductModal()"><i class="ti ti-plus"></i>Add Product</button>
         </div>
       </div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>Product</th><th>Category</th><th>Qty</th><th>Cost Price</th><th>Sell Price</th><th>Margin</th><th>Status</th><th></th></tr></thead>
+          <thead><tr><th>Product</th><th class="hide-mobile">Category</th><th>Qty</th><th class="hide-mobile">Cost Price</th><th>Sell Price</th><th class="hide-mobile">Margin</th><th class="hide-mobile">Status</th><th></th></tr></thead>
           <tbody id="inv-table-body">
             <tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="ti ti-package"></i></div><div class="empty-title">No products yet</div><div class="empty-desc">Add your first product to start tracking inventory.</div><button class="btn btn-primary" onclick="openProductModal()"><i class="ti ti-plus"></i>Add Product</button></div></td></tr>
           </tbody>
@@ -419,21 +428,27 @@ tr:hover td{background:var(--off)}
     <!-- SALES -->
     <div class="section" id="sec-sales">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div style="display:flex;gap:8px">
-          <div class="pill active" onclick="filterSales(this,'all')">All</div>
-          <div class="pill" onclick="filterSales(this,'today')">Today</div>
-          <div class="pill" onclick="filterSales(this,'week')">This week</div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="display:flex;gap:8px">
+            <div class="pill active" onclick="filterSales(this,'all')">All</div>
+            <div class="pill" onclick="filterSales(this,'today')">Today</div>
+            <div class="pill" onclick="filterSales(this,'week')">This week</div>
+          </div>
+          <div style="position:relative;width:220px">
+            <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px"></i>
+            <input type="text" placeholder="Search sales by product..." oninput="searchTable('sales', this.value)" style="padding:6px 12px 6px 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;width:100%;outline:none">
+          </div>
         </div>
         <button class="btn btn-primary btn-sm" onclick="openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button>
       </div>
-      <div class="metrics-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">
+      <div class="metrics-grid" style="margin-bottom:20px">
         <div class="metric-card"><div class="metric-label">Total Revenue</div><div class="metric-value" id="s-revenue">₵0</div></div>
         <div class="metric-card"><div class="metric-label">Gross Profit</div><div class="metric-value" id="s-profit">₵0</div></div>
         <div class="metric-card"><div class="metric-label">Units Sold</div><div class="metric-value" id="s-units">0</div></div>
       </div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Sale Price</th><th>Discount</th><th>Revenue</th><th>Profit</th><th>Margin</th><th>Payment</th></tr></thead>
+          <thead><tr><th class="hide-mobile">Date</th><th>Product</th><th>Qty</th><th class="hide-mobile">Sale Price</th><th class="hide-mobile">Discount</th><th>Revenue</th><th>Profit</th><th class="hide-mobile">Margin</th><th class="hide-mobile">Payment</th></tr></thead>
           <tbody id="sales-table-body">
             <tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="ti ti-shopping-cart"></i></div><div class="empty-title">No sales recorded</div><div class="empty-desc">Record your first sale to track revenue and profit.</div><button class="btn btn-primary" onclick="openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button></div></td></tr>
           </tbody>
@@ -462,7 +477,7 @@ tr:hover td{background:var(--off)}
       </div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead>
+          <thead><tr><th>Date</th><th>Description</th><th class="hide-mobile">Category</th><th>Amount</th></tr></thead>
           <tbody id="exp-table-body">
             <tr><td colspan="4" style="text-align:center;padding:30px;color:var(--text-soft)">No expenses recorded yet.</td></tr>
           </tbody>
@@ -473,12 +488,18 @@ tr:hover td{background:var(--off)}
     <!-- REFUNDS -->
     <div class="section" id="sec-refunds">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-        <div style="font-size:13px;color:var(--text-soft)" id="refund-summary">₵0 total refunded</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="font-size:13px;color:var(--text-soft)" id="refund-summary">₵0 total refunded</div>
+          <div style="position:relative;width:200px">
+            <i class="ti ti-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px"></i>
+            <input type="text" placeholder="Search refunds..." oninput="searchTable('refunds', this.value)" style="padding:6px 12px 6px 32px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;width:100%;outline:none">
+          </div>
+        </div>
         <button class="btn btn-primary btn-sm" onclick="openRefundModal()"><i class="ti ti-plus"></i>Record Refund</button>
       </div>
       <div class="tbl-wrap">
         <table>
-          <thead><tr><th>Date</th><th>Product</th><th>Qty</th><th>Reason</th><th>Refund Amount</th><th>Restocked?</th></tr></thead>
+          <thead><tr><th class="hide-mobile">Date</th><th>Product</th><th>Qty</th><th class="hide-mobile">Reason</th><th>Refund Amount</th><th class="hide-mobile">Restocked?</th></tr></thead>
           <tbody id="refund-table-body">
             <tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="ti ti-arrow-back-up"></i></div><div class="empty-title">No refunds recorded</div><div class="empty-desc">Customer returns and refunds will appear here.</div></div></td></tr>
           </tbody>
@@ -810,17 +831,19 @@ const state={products:[],sales:[],expenses:[],refunds:[],capital:[],drawings:[]}
 let editMode = { active: false, type: null, index: null };
 const GHS='₵';
 
-function toggleDropdown(e, id){
-  e.stopPropagation();
-  const el = document.getElementById(id);
-  const wasShow = el.classList.contains('show');
-  document.querySelectorAll('.dropdown-content').forEach(d=>d.classList.remove('show'));
-  if(!wasShow) el.classList.add('show');
+function saveState(){
+  localStorage.setItem('profitpilot_data', JSON.stringify(state));
 }
 
-window.onclick=function(e){
-  if(!e.target.closest('.dropdown')){
-    document.querySelectorAll('.dropdown-content').forEach(d=>d.classList.remove('show'));
+function loadState(){
+  const saved = localStorage.getItem('profitpilot_data');
+  if(saved){
+    try {
+      const parsed = JSON.parse(saved);
+      Object.assign(state, parsed);
+    } catch(e) {
+      console.error('Error loading state', e);
+    }
   }
 }
 
@@ -843,6 +866,7 @@ function deleteEntry(type, idx){
     if(type==='drawing') refreshDrawings();
     refreshDashboard();
     checkAlerts();
+    saveState();
   }
 }
 
@@ -983,6 +1007,62 @@ function populateProductSelect(id){
   });
 }
 
+function searchTable(type, query){
+  const q = query.toLowerCase();
+  if(type === 'inventory'){
+    const filtered = state.products.map((p,i)=>({...p, originalIdx: i})).filter(p => p.name.toLowerCase().includes(q) || p.cat.toLowerCase().includes(q) || (p.supplier && p.supplier.toLowerCase().includes(q)));
+    renderInventory(filtered);
+  } else if(type === 'sales'){
+    const filtered = state.sales.map((s,i)=>({...s, originalIdx: i})).filter(s => s.product.toLowerCase().includes(q) || s.payment.toLowerCase().includes(q));
+    renderSales(filtered);
+  } else if(type === 'refunds'){
+    const filtered = state.refunds.map((r,i)=>({...r, originalIdx: i})).filter(r => r.product.toLowerCase().includes(q) || r.reason.toLowerCase().includes(q));
+    renderRefunds(filtered);
+  }
+}
+
+function renderInventory(productsToShow){
+  const tbody=document.getElementById('inv-table-body');
+  if(!productsToShow.length){
+    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="ti ti-package"></i></div><div class="empty-title">No matching products</div></div></td></tr>';
+    return;
+  }
+  tbody.innerHTML=productsToShow.map((p,i)=>{
+    const margin=p.sell>0?((p.sell-p.cost)/p.sell*100).toFixed(1):0;
+    const low=p.qty<=p.low;
+    const statusBadge=low?'<span class="badge badge-red">Low Stock</span>':'<span class="badge badge-green">In Stock</span>';
+    const idx = p.originalIdx !== undefined ? p.originalIdx : i;
+    return`<tr>
+      <td><div style="display:flex;align-items:center;gap:10px"><div class="prod-thumb"><i class="ti ti-package"></i></div><div><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text-soft)">${p.supplier||'No supplier'}</div></div></div></td>
+      <td class="hide-mobile"><span class="badge badge-teal">${p.cat}</span></td>
+      <td style="font-weight:500;${p.qty<=p.low?'color:var(--red)':''}">${p.qty}</td>
+      <td class="hide-mobile">${fmt(p.cost)}</td>
+      <td>${fmt(p.sell)}</td>
+      <td class="hide-mobile"><span class="badge ${margin>=30?'badge-green':margin>=15?'badge-amber':'badge-red'}">${margin}%</span></td>
+      <td class="hide-mobile">${statusBadge}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn btn-outline btn-sm hide-mobile" onclick="openRestockModal()">Restock</button>
+          <div class="dropdown">
+            <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-inv-${idx}')"><i class="ti ti-dots-vertical"></i></button>
+            <div class="dropdown-content" id="drop-inv-${idx}">
+              <div class="dropdown-item" onclick="startEdit('product', ${idx})"><i class="ti ti-edit"></i>Edit</div>
+              <div class="dropdown-item danger" onclick="deleteEntry('product', ${idx})"><i class="ti ti-trash"></i>Delete</div>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+function refreshInventory(){
+  const totalVal=state.products.reduce((a,p)=>a+p.cost*p.qty,0);
+  const summaryEl = document.getElementById('inv-summary');
+  if(summaryEl) summaryEl.textContent=state.products.length+' products · '+fmt(totalVal)+' total value';
+  renderInventory(state.products.map((p,i)=>({...p, originalIdx: i})));
+}
+
 function addProduct(){
   const name=document.getElementById('p-name').value.trim();
   const cat=document.getElementById('p-cat').value;
@@ -1003,42 +1083,7 @@ function addProduct(){
   closeModal('modal-product');
   ['p-name','p-cost','p-sell','p-qty','p-low','p-supplier'].forEach(id=>document.getElementById(id).value='');
   refreshInventory();refreshDashboard();checkAlerts();
-}
-
-function refreshInventory(){
-  const tbody=document.getElementById('inv-table-body');
-  const totalVal=state.products.reduce((a,p)=>a+p.cost*p.qty,0);
-  document.getElementById('inv-summary').textContent=state.products.length+' products · '+fmt(totalVal)+' total value';
-  if(!state.products.length){
-    tbody.innerHTML='<tr><td colspan="8"><div class="empty-state"><div class="empty-icon"><i class="ti ti-package"></i></div><div class="empty-title">No products yet</div><div class="empty-desc">Add your first product to start tracking inventory.</div><button class="btn btn-primary" onclick="openProductModal()"><i class="ti ti-plus"></i>Add Product</button></div></td></tr>';
-    return;
-  }
-  tbody.innerHTML=state.products.map((p,i)=>{
-    const margin=p.sell>0?((p.sell-p.cost)/p.sell*100).toFixed(1):0;
-    const low=p.qty<=p.low;
-    const statusBadge=low?'<span class="badge badge-red">Low Stock</span>':'<span class="badge badge-green">In Stock</span>';
-    return`<tr>
-      <td><div style="display:flex;align-items:center;gap:10px"><div class="prod-thumb"><i class="ti ti-package"></i></div><div><div style="font-weight:500">${p.name}</div><div style="font-size:11px;color:var(--text-soft)">${p.supplier||'No supplier'}</div></div></div></td>
-      <td><span class="badge badge-teal">${p.cat}</span></td>
-      <td style="font-weight:500;${p.qty<=p.low?'color:var(--red)':''}">${p.qty}</td>
-      <td>${fmt(p.cost)}</td>
-      <td>${fmt(p.sell)}</td>
-      <td><span class="badge ${margin>=30?'badge-green':margin>=15?'badge-amber':'badge-red'}">${margin}%</span></td>
-      <td>${statusBadge}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:8px">
-          <button class="btn btn-outline btn-sm" onclick="openRestockModal()">Restock</button>
-          <div class="dropdown">
-            <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-inv-${i}')"><i class="ti ti-dots-vertical"></i></button>
-            <div class="dropdown-content" id="drop-inv-${i}">
-              <div class="dropdown-item" onclick="startEdit('product', ${i})"><i class="ti ti-edit"></i>Edit</div>
-              <div class="dropdown-item danger" onclick="deleteEntry('product', ${i})"><i class="ti ti-trash"></i>Delete</div>
-            </div>
-          </div>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
+  saveState();
 }
 
 function restock(){
@@ -1059,6 +1104,7 @@ function restock(){
   state.expenses.push({date:today(),desc:'Restock: '+p.name,cat:'Inventory',amount:totalCost});
   closeModal('modal-restock');
   refreshInventory();refreshExpenses();refreshDashboard();checkAlerts();
+  saveState();
 }
 
 function updateSaleCalc(){
@@ -1112,6 +1158,7 @@ function recordSale(){
   
   closeModal('modal-sale');
   refreshSales();refreshInventory();refreshDashboard();checkAlerts();
+  saveState();
 }
 
 function filterSales(el, period){
@@ -1120,42 +1167,23 @@ function filterSales(el, period){
   refreshSales(period);
 }
 
-function refreshSales(period = 'all'){
+function renderSales(salesToShow){
   const tbody=document.getElementById('sales-table-body');
-  let visSales = state.sales.map((s, i) => ({...s, originalIdx: i}));
-  
-  if(period === 'today'){
-    const t = today();
-    visSales = visSales.filter(s => s.date === t);
-  } else if(period === 'week'){
-    const now = new Date();
-    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    visSales = visSales.filter(s => new Date(s.date) >= weekAgo);
-  }
-
-  const totalRev=visSales.reduce((a,s)=>a+s.rev,0);
-  const totalProfit=visSales.reduce((a,s)=>a+s.profit,0);
-  const totalUnits=visSales.reduce((a,s)=>a+s.qty,0);
-  document.getElementById('s-revenue').textContent=fmt(totalRev);
-  document.getElementById('s-profit').textContent=fmt(totalProfit);
-  document.getElementById('s-units').textContent=totalUnits;
-  
-  if(!visSales.length){
-    tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="ti ti-shopping-cart"></i></div><div class="empty-title">No sales found</div><div class="empty-desc">Try changing the filter or record a new sale.</div><button class="btn btn-primary" onclick="openSaleModal()"><i class="ti ti-plus"></i>Record Sale</button></div></td></tr>`;
+  if(!salesToShow.length){
+    tbody.innerHTML=`<tr><td colspan="9"><div class="empty-state"><div class="empty-icon"><i class="ti ti-shopping-cart"></i></div><div class="empty-title">No sales found</div></div></td></tr>`;
     return;
   }
-  
-  tbody.innerHTML=[...visSales].reverse().map((s,i)=>{
+  tbody.innerHTML=[...salesToShow].reverse().map((s,i)=>{
     return`<tr>
-      <td style="white-space:nowrap;font-size:12px;color:var(--text-soft)">${s.date}</td>
+      <td class="hide-mobile" style="white-space:nowrap;font-size:12px;color:var(--text-soft)">${s.date}</td>
       <td style="font-weight:500">${s.product}</td>
       <td>${s.qty}</td>
-      <td>${fmt(s.price)}</td>
-      <td>${s.disc>0?fmt(s.disc):'-'}</td>
+      <td class="hide-mobile">${fmt(s.price)}</td>
+      <td class="hide-mobile">${s.disc>0?fmt(s.disc):'-'}</td>
       <td style="font-weight:500">${fmt(s.rev)}</td>
       <td style="font-weight:500;color:${s.profit>=0?'var(--green)':'var(--red)'}">${fmt(s.profit)}</td>
-      <td><span class="badge ${s.margin>=20?'badge-green':s.margin>=10?'badge-amber':'badge-red'}">${s.margin}%</span></td>
-      <td>
+      <td class="hide-mobile"><span class="badge ${s.margin>=20?'badge-green':s.margin>=10?'badge-amber':'badge-red'}">${s.margin}%</span></td>
+      <td class="hide-mobile">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
           <span class="badge badge-teal">${s.payment}</span>
           <div class="dropdown">
@@ -1169,6 +1197,25 @@ function refreshSales(period = 'all'){
       </td>
     </tr>`;
   }).join('');
+}
+
+function refreshSales(period = 'all'){
+  let visSales = state.sales.map((s, i) => ({...s, originalIdx: i}));
+  if(period === 'today'){
+    const t = today();
+    visSales = visSales.filter(s => s.date === t);
+  } else if(period === 'week'){
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    visSales = visSales.filter(s => new Date(s.date) >= weekAgo);
+  }
+  const totalRev=visSales.reduce((a,s)=>a+s.rev,0);
+  const totalProfit=visSales.reduce((a,s)=>a+s.profit,0);
+  const totalUnits=visSales.reduce((a,s)=>a+s.qty,0);
+  document.getElementById('s-revenue').textContent=fmt(totalRev);
+  document.getElementById('s-profit').textContent=fmt(totalProfit);
+  document.getElementById('s-units').textContent=totalUnits;
+  renderSales(visSales);
 }
 
 function addExpense(){
@@ -1187,6 +1234,7 @@ function addExpense(){
   closeModal('modal-expense');
   ['ex-desc','ex-amount'].forEach(id=>document.getElementById(id).value='');
   refreshExpenses();refreshDashboard();
+  saveState();
 }
 
 let expChartInst=null,stmtChartInst=null;
@@ -1203,7 +1251,7 @@ function refreshExpenses(){
   tbody.innerHTML=[...visExpIndices].reverse().map((e, i)=>`<tr>
     <td style="font-size:12px;color:var(--text-soft)">${e.date}</td>
     <td>${e.desc}</td>
-    <td><span class="badge badge-amber">${e.cat}</span></td>
+    <td class="hide-mobile"><span class="badge badge-amber">${e.cat}</span></td>
     <td>
       <div style="display:flex;align-items:center;justify-content:space-between">
         <span style="font-weight:500">${fmt(e.amount)}</span>
@@ -1251,27 +1299,25 @@ function recordRefund(){
   
   closeModal('modal-refund');
   refreshRefunds();refreshDashboard();
+  saveState();
 }
 
-function refreshRefunds(){
+function renderRefunds(refundsToShow){
   const tbody=document.getElementById('refund-table-body');
-  const visRefunds = state.refunds.map((r, i) => ({...r, originalIdx: i}));
-  const total=visRefunds.reduce((a,r)=>a+r.amount,0);
-  document.getElementById('refund-summary').textContent=fmt(total)+' total refunded';
-  if(!visRefunds.length){
-    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="ti ti-arrow-back-up"></i></div><div class="empty-title">No refunds recorded</div><div class="empty-desc">Customer returns and refunds will appear here.</div></div></td></tr>';
+  if(!refundsToShow.length){
+    tbody.innerHTML='<tr><td colspan="6"><div class="empty-state"><div class="empty-icon"><i class="ti ti-arrow-back-up"></i></div><div class="empty-title">No matching refunds</div></div></td></tr>';
     return;
   }
-  tbody.innerHTML=[...visRefunds].reverse().map((r, i)=>{
+  tbody.innerHTML=[...refundsToShow].reverse().map((r, i)=>{
     return`<tr>
-      <td style="font-size:12px;color:var(--text-soft)">${r.date}</td>
+      <td class="hide-mobile" style="font-size:12px;color:var(--text-soft)">${r.date}</td>
       <td style="font-weight:500">${r.product}</td>
       <td>${r.qty}</td>
-      <td><span class="badge badge-amber">${r.reason}</span></td>
+      <td class="hide-mobile"><span class="badge badge-amber">${r.reason}</span></td>
       <td style="font-weight:500;color:var(--red)">${fmt(r.amount)}</td>
       <td>
         <div style="display:flex;align-items:center;justify-content:space-between">
-          ${r.restocked?'<span class="badge badge-green">Yes</span>':'<span class="badge badge-red">No</span>'}
+          <span class="badge ${r.restocked?'badge-green':'badge-red'} hide-mobile">${r.restocked?'Yes':'No'}</span>
           <div class="dropdown">
             <button class="dropdown-btn" onclick="toggleDropdown(event, 'drop-refund-${i}')"><i class="ti ti-dots-vertical"></i></button>
             <div class="dropdown-content" id="drop-refund-${i}">
@@ -1283,6 +1329,13 @@ function refreshRefunds(){
       </td>
     </tr>`;
   }).join('');
+}
+
+function refreshRefunds(){
+  const total=state.refunds.reduce((a,r)=>a+r.amount,0);
+  const summaryEl = document.getElementById('refund-summary');
+  if(summaryEl) summaryEl.textContent=fmt(total)+' total refunded';
+  renderRefunds(state.refunds.map((r, i) => ({...r, originalIdx: i})));
 }
 
 function addCapital(){
@@ -1303,6 +1356,7 @@ function addCapital(){
   
   closeModal('modal-capital');
   refreshCapital();refreshDashboard();
+  saveState();
 }
 
 function refreshCapital(){
@@ -1364,6 +1418,7 @@ function recordDrawing(){
   closeModal('modal-drawing');
   ['dr-amount','dr-purpose'].forEach(id=>document.getElementById(id).value='');
   refreshDrawings();refreshDashboard();
+  saveState();
 }
 
 function refreshDrawings(){
@@ -1599,7 +1654,16 @@ document.querySelectorAll('.modal-overlay').forEach(m=>{
   m.addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
 });
 
-refreshDashboard();checkAlerts();
+// Initialization
+loadState();
+refreshInventory();
+refreshSales();
+refreshExpenses();
+refreshRefunds();
+refreshCapital();
+refreshDrawings();
+refreshDashboard();
+checkAlerts();
 </script>
 </body>
 </html>
